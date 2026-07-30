@@ -42,7 +42,7 @@ export default function Home() {
         </a>
         <nav aria-label="Основная навигация">
           <a href="#services">Услуги</a>
-          <a href="#gallery">Работы</a>
+          <a href="/works">Работы</a>
           <a href="#about">О нас</a>
         </nav>
         <a className="header-phone" href={`tel:+${phone}`}>{phoneDisplay}</a>
@@ -123,6 +123,11 @@ export default function Home() {
               <img src={image.src} alt={image.alt} />
             </figure>
           ))}
+        </div>
+        <div className="gallery-more">
+          <a className="button button-ghost" href="/works">
+            Смотреть все работы <span>→</span>
+          </a>
         </div>
       </section>
 
