@@ -1,3 +1,17 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Наши работы — фотозоны и оформление праздников в Уссурийске",
+  description: "Портфолио студии «Шарик»: фотозоны, композиции из воздушных шаров, оформление свадеб, выпускных и дней рождения в Уссурийске.",
+  alternates: { canonical: "/works/" },
+  openGraph: {
+    url: "/works/",
+    title: "Работы студии декора «Шарик»",
+    description: "Реальные фотозоны и композиции из воздушных шаров в Уссурийске.",
+    images: [{ url: "/images/works/work-069.jpeg", width: 1080, height: 1350, alt: "Фотозона студии Шарик" }],
+  },
+};
+
 const phoneDisplay = "+7 908 455-16-35";
 const phone = "79084551635";
 const whatsappLink =
