@@ -6,18 +6,18 @@ const telegramLink =
   `https://t.me/+${phone}?text=${encodeURIComponent("Здравствуйте! Хочу заказать шары или оформление праздника.")}&profile`;
 
 const services = [
-  { title: "Воздушные шары", price: "от 150 ₽", note: "Латексные, фольгированные, с надписями" },
-  { title: "Букеты из шаров", price: "от 700 ₽", note: "Композиции под повод, возраст и бюджет" },
-  { title: "Гендер-пати", price: "от 1 500 ₽", note: "Большие шары, коробки и тематический декор" },
-  { title: "День рождения", price: "от 1 500 ₽", note: "Цифры, фонтаны, коробки-сюрпризы" },
-  { title: "Выпускной", price: "от 1 800 ₽", note: "Оформление групп, классов, сцен и залов" },
-  { title: "Авто на выписку", price: "от 2 500 ₽", note: "Готовый комплект с монтажом" },
-  { title: "Выписка из роддома", price: "от 3 000 ₽", note: "Нежные композиции для мамы и малыша" },
-  { title: "Юбилей", price: "от 3 500 ₽", note: "Стильное оформление для взрослых" },
-  { title: "Арки и гирлянды", price: "от 4 000 ₽", note: "Органические гирлянды любой палитры" },
-  { title: "Корпоратив", price: "от 6 000 ₽", note: "Открытия, презентации и бренд-зоны" },
-  { title: "Фотозоны", price: "от 6 500 ₽", note: "Фон, декор, надпись и монтаж" },
-  { title: "Свадебное оформление", price: "от 10 000 ₽", note: "Персональная концепция для площадки" },
+  { title: "Воздушные шары", price: "от 150 ₽", note: "Латексные, фольгированные, с надписями", image: "/images/works/work-001.jpeg", alt: "Белая персональная композиция из воздушных шаров" },
+  { title: "Букеты из шаров", price: "от 700 ₽", note: "Композиции под повод, возраст и бюджет", image: "/images/works/work-004.jpeg", alt: "Серебряно-белый букет из воздушных шаров" },
+  { title: "Гендер-пати", price: "от 1 500 ₽", note: "Большие шары, коробки и тематический декор", image: "/images/works/work-108.jpeg", alt: "Большая композиция для гендер-пати" },
+  { title: "День рождения", price: "от 1 500 ₽", note: "Цифры, фонтаны, коробки-сюрпризы", image: "/images/works/work-069.jpeg", alt: "Розово-золотая фотозона на день рождения" },
+  { title: "Выпускной", price: "от 1 800 ₽", note: "Оформление групп, классов, сцен и залов", image: "/images/works/work-120.jpeg", alt: "Фиолетовая фотозона на выпускной" },
+  { title: "Авто на выписку", price: "от 2 500 ₽", note: "Готовый комплект с монтажом", image: "/images/works/work-103.jpeg", alt: "Голубая композиция для новорождённого" },
+  { title: "Выписка из роддома", price: "от 3 000 ₽", note: "Нежные композиции для мамы и малыша", image: "/images/newborn.jpeg", alt: "Нежная композиция из шаров на выписку" },
+  { title: "Юбилей", price: "от 3 500 ₽", note: "Стильное оформление для взрослых", image: "/images/works/work-058.jpeg", alt: "Золотая фотозона на юбилей" },
+  { title: "Арки и гирлянды", price: "от 4 000 ₽", note: "Органические гирлянды любой палитры", image: "/images/works/work-055.jpeg", alt: "Воздушная бело-золотая арка из шаров" },
+  { title: "Корпоратив", price: "от 6 000 ₽", note: "Открытия, презентации и бренд-зоны", image: "/images/works/work-066.jpeg", alt: "Большая синяя фотозона для праздничной сцены" },
+  { title: "Фотозоны", price: "от 6 500 ₽", note: "Фон, декор, надпись и монтаж", image: "/images/works/work-056.jpeg", alt: "Нежная розовая фотозона" },
+  { title: "Свадебное оформление", price: "от 10 000 ₽", note: "Персональная концепция для площадки", image: "/images/works/work-077.jpeg", alt: "Свадебное оформление на природе" },
 ];
 
 const gallery = [
@@ -68,7 +68,7 @@ export default function Home() {
         </div>
         <div className="hero-visual">
           <div className="hero-photo">
-            <img src="/images/hero.jpeg" alt="Нежная фотозона студии Шарик" />
+            <img src="/images/hero.jpeg?v=2" alt="Нежная розово-серебряная фотозона студии Шарик" fetchPriority="high" />
           </div>
           <div className="floating-card floating-card-top">
             <span className="spark">✦</span>
@@ -97,12 +97,17 @@ export default function Home() {
         <div className="services-grid">
           {services.map((service, index) => (
             <article className="service-card" key={service.title}>
-              <span className="service-number">{String(index + 1).padStart(2, "0")}</span>
-              <h3>{service.title}</h3>
-              <p>{service.note}</p>
-              <div>
-                <strong>{service.price}</strong>
-                <a href={whatsappLink} aria-label={`Узнать стоимость: ${service.title}`}>Уточнить <span>↗</span></a>
+              <div className="service-image">
+                <img src={service.image} alt={service.alt} loading="lazy" />
+                <span className="service-number">{String(index + 1).padStart(2, "0")}</span>
+              </div>
+              <div className="service-content">
+                <h3>{service.title}</h3>
+                <p>{service.note}</p>
+                <div className="service-meta">
+                  <strong>{service.price}</strong>
+                  <a href={whatsappLink} aria-label={`Узнать стоимость: ${service.title}`}>Уточнить <span>↗</span></a>
+                </div>
               </div>
             </article>
           ))}
@@ -174,12 +179,17 @@ export default function Home() {
       </section>
 
       <footer>
-        <a className="brand brand-footer" href="#top">
-          <span className="brand-mark">Ш</span>
-          <span><strong>Шарик</strong><small>студия декора</small></span>
+        <div className="footer-main">
+          <a className="brand brand-footer" href="#top">
+            <span className="brand-mark">Ш</span>
+            <span><strong>Шарик</strong><small>студия декора</small></span>
+          </a>
+          <p>Создаём атмосферу вашего праздника в Приморском крае</p>
+          <div className="footer-details"><span>Садовая, 3г</span><span>Ежедневно</span></div>
+        </div>
+        <a className="footer-credit" href="https://24zxc.ru" target="_blank" rel="noopener noreferrer">
+          Сделано с <span className="pulse-heart" aria-label="любовью">♥</span> <strong>24zxc.ru</strong>
         </a>
-        <p>Создаём атмосферу вашего праздника в Приморском крае</p>
-        <div><span>Садовая, 3г</span><span>Ежедневно</span></div>
       </footer>
     </main>
   );
