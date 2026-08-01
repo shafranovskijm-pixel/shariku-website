@@ -2,9 +2,43 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Шарик — воздушные шары и оформление праздников",
+  metadataBase: new URL("https://shariku.ru"),
+  title: {
+    default: "Воздушные шары в Уссурийске — студия декора «Шарик»",
+    template: "%s | Студия «Шарик»",
+  },
   description:
-    "Студия декора и воздушных шаров в Приморском крае. Букеты, фотозоны, оформление свадеб, дней рождения и других событий.",
+    "Воздушные шары, букеты, фотозоны и оформление праздников в Уссурийске. Доставка, монтаж и индивидуальный декор от студии «Шарик».",
+  keywords: [
+    "воздушные шары Уссурийск",
+    "шары с доставкой Уссурийск",
+    "оформление праздников Уссурийск",
+    "фотозона Уссурийск",
+    "букеты из шаров",
+    "студия декора Шарик",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "ru_RU",
+    url: "/",
+    siteName: "Студия декора «Шарик»",
+    title: "Воздушные шары и оформление праздников в Уссурийске",
+    description: "Букеты из шаров, фотозоны и оформление событий с доставкой по Уссурийску и Приморскому краю.",
+    images: [{ url: "/images/hero.jpeg", width: 1080, height: 1350, alt: "Фотозона студии декора Шарик" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Студия декора «Шарик» — Уссурийск",
+    description: "Воздушные шары, фотозоны и оформление праздников.",
+    images: ["/images/hero.jpeg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
@@ -18,7 +52,38 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body>{children}</body>
+      <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "LocalBusiness",
+              "@id": "https://shariku.ru/#business",
+              name: "Шарик — студия декора",
+              description: "Воздушные шары, букеты, фотозоны и оформление праздников в Уссурийске.",
+              url: "https://shariku.ru/",
+              telephone: "+7 908 455-16-35",
+              image: [
+                "https://shariku.ru/images/hero.jpeg",
+                "https://shariku.ru/images/wedding.jpeg",
+                "https://shariku.ru/images/birthday.jpeg",
+              ],
+              priceRange: "₽₽",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "Садовая улица, 3г",
+                addressLocality: "Уссурийск",
+                addressRegion: "Приморский край",
+                addressCountry: "RU",
+              },
+              areaServed: ["Уссурийск", "Приморский край"],
+              sameAs: [],
+            }),
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
