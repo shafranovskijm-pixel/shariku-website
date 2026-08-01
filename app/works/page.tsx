@@ -100,12 +100,17 @@ export default function WorksPage() {
       </section>
 
       <footer>
-        <a className="brand brand-footer" href="/">
-          <span className="brand-mark">Ш</span>
-          <span><strong>Шарик</strong><small>студия декора</small></span>
+        <div className="footer-main">
+          <a className="brand brand-footer" href="/">
+            <span className="brand-mark">Ш</span>
+            <span><strong>Шарик</strong><small>студия декора</small></span>
+          </a>
+          <p>Создаём атмосферу вашего праздника в Приморском крае</p>
+          <div className="footer-details"><span>Садовая, 3г</span><span>Ежедневно</span></div>
+        </div>
+        <a className="footer-credit" href="https://24zxc.ru" target="_blank" rel="noopener noreferrer">
+          Сделано с <span className="pulse-heart" aria-label="любовью">♥</span> <strong>24zxc.ru</strong>
         </a>
-        <p>Создаём атмосферу вашего праздника в Приморском крае</p>
-        <div><span>Садовая, 3г</span><span>Ежедневно</span></div>
       </footer>
     </main>
   );
