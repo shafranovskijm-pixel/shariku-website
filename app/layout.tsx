@@ -77,6 +77,20 @@ export default function RootLayout({
                 addressRegion: "Приморский край",
                 addressCountry: "RU",
               },
+              openingHoursSpecification: [
+                {
+                  "@type": "OpeningHoursSpecification",
+                  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                  opens: "10:00",
+                  closes: "19:00",
+                },
+                {
+                  "@type": "OpeningHoursSpecification",
+                  dayOfWeek: "Sunday",
+                  opens: "10:00",
+                  closes: "18:00",
+                },
+              ],
               areaServed: ["Уссурийск", "Приморский край"],
               sameAs: [],
             }),

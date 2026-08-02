@@ -185,7 +185,10 @@ export default function Home() {
             <span><strong>Шарик</strong><small>студия декора</small></span>
           </a>
           <p>Создаём атмосферу вашего праздника в Приморском крае</p>
-          <div className="footer-details"><span>Садовая, 3г</span><span>Ежедневно</span></div>
+          <div className="footer-details">
+            <span>Садовая, 3г</span>
+            <span>Пн–Сб 10:00–19:00 · Вс 10:00–18:00</span>
+          </div>
         </div>
         <a className="footer-credit" href="https://24zxc.ru" target="_blank" rel="noopener noreferrer">
           Сделано с <span className="pulse-heart" aria-label="любовью">♥</span> <strong>24zxc.ru</strong>
