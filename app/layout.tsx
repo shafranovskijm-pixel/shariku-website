@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Metrika from "./Metrika";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://shariku.ru"),
@@ -53,6 +54,16 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
+        <Metrika />
+        <noscript>
+          <div>
+            <img
+              src="https://mc.yandex.ru/watch/111239502"
+              style={{ position: "absolute", left: "-9999px" }}
+              alt=""
+            />
+          </div>
+        </noscript>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
