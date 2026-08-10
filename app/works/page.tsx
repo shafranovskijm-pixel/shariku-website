@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Наши работы — фотозоны и оформление праздников в Уссурийске",
@@ -6,27 +7,24 @@ export const metadata: Metadata = {
   alternates: { canonical: "/works/" },
   openGraph: {
     url: "/works/",
-    title: "Работы студии декора «Шарик»",
+    title: "Работы студии оформления «Шарик»",
     description: "Реальные фотозоны и композиции из воздушных шаров в Уссурийске.",
     images: [{ url: "/images/works/work-069.jpeg", width: 1080, height: 1350, alt: "Фотозона студии Шарик" }],
   },
 };
 
-const phoneDisplay = "+7 908 455-16-35";
-const phone = "79084551635";
+const phoneDisplay = "+7 924 337-01-23";
+const phone = "79243370123";
 const whatsappLink =
   `https://wa.me/${phone}?text=${encodeURIComponent("Здравствуйте! Посмотрел(а) ваши работы на сайте. Хочу обсудить оформление праздника.")}`;
 
 const works = [
-  { src: "/images/works/work-001.jpeg", alt: "Персональная композиция из белых шаров", category: "Композиции" },
-  { src: "/images/works/work-003.jpeg", alt: "Свадебная композиция в бело-золотой гамме", category: "Свадьбы" },
   { src: "/images/works/work-004.jpeg", alt: "Серебряно-белый букет шаров для пары", category: "Композиции" },
   { src: "/images/works/work-007.jpeg", alt: "Белая фотозона с прозрачными шарами", category: "Фотозоны" },
   { src: "/images/works/work-012.jpeg", alt: "Свадебная фотозона с молодожёнами", category: "Свадьбы" },
   { src: "/images/works/work-018.jpeg", alt: "Бирюзовая фотозона на выпускной", category: "Выпускные" },
   { src: "/images/works/work-022.jpeg", alt: "Круглая бело-золотая фотозона", category: "Фотозоны" },
   { src: "/images/works/work-028.jpeg", alt: "Букет из маленьких золотых и белых шаров", category: "Композиции" },
-  { src: "/images/works/work-031.jpeg", alt: "Свадебная фотозона с цветами", category: "Свадьбы" },
   { src: "/images/works/work-033.jpeg", alt: "Серебряная фотозона на юбилей", category: "Юбилеи" },
   { src: "/images/works/work-036.jpeg", alt: "Сине-серебряная фотозона", category: "Фотозоны" },
   { src: "/images/works/work-038.jpeg", alt: "Прозрачная композиция с белыми шарами", category: "Композиции" },
@@ -44,7 +42,6 @@ const works = [
   { src: "/images/works/work-082.jpeg", alt: "Яркая детская композиция на два года", category: "Детские праздники" },
   { src: "/images/works/work-088.jpeg", alt: "Разноцветное оформление детского праздника", category: "Детские праздники" },
   { src: "/images/works/work-090.jpeg", alt: "Сине-серебряная композиция на один год", category: "Детские праздники" },
-  { src: "/images/works/work-098.jpeg", alt: "Нежно-розовый персональный набор шаров", category: "Композиции" },
   { src: "/images/works/work-103.jpeg", alt: "Голубая композиция для новорождённого", category: "Выписка" },
   { src: "/images/works/work-108.jpeg", alt: "Большая композиция для гендер-пати", category: "Гендер-пати" },
   { src: "/images/works/work-112.jpeg", alt: "Уличная фотозона на первый день рождения", category: "Детские праздники" },
@@ -62,17 +59,17 @@ export default function WorksPage() {
   return (
     <main className="works-page">
       <header className="site-header">
-        <a className="brand" href="/" aria-label="Шарик — на главную">
+        <Link className="brand" href="/" aria-label="Шарик — на главную">
           <span className="brand-mark">Ш</span>
           <span>
             <strong>Шарик</strong>
-            <small>студия декора</small>
+            <small>воздушные шары и оформление</small>
           </span>
-        </a>
+        </Link>
         <nav aria-label="Навигация по сайту">
-          <a href="/">Главная</a>
-          <a href="/#services">Услуги</a>
-          <a href="/#about">О нас</a>
+          <Link href="/">Главная</Link>
+          <Link href="/#services">Услуги</Link>
+          <Link href="/#about">О нас</Link>
         </nav>
         <a className="header-phone" href={`tel:+${phone}`}>{phoneDisplay}</a>
       </header>
@@ -115,14 +112,15 @@ export default function WorksPage() {
 
       <footer>
         <div className="footer-main">
-          <a className="brand brand-footer" href="/">
+          <Link className="brand brand-footer" href="/">
             <span className="brand-mark">Ш</span>
-            <span><strong>Шарик</strong><small>студия декора</small></span>
-          </a>
+            <span><strong>Шарик</strong><small>воздушные шары и оформление</small></span>
+          </Link>
           <p>Создаём атмосферу вашего праздника в Приморском крае</p>
           <div className="footer-details">
             <span>Садовая, 3г</span>
             <span>Пн–Сб 10:00–19:00 · Вс 10:00–18:00</span>
+            <span>Екатерина +7 924 337-01-23 · Наталья +7 924 336-30-07</span>
           </div>
         </div>
         <a className="footer-credit" href="https://24zxc.ru" target="_blank" rel="noopener noreferrer">

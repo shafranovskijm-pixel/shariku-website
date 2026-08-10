@@ -1,12 +1,17 @@
-const phoneDisplay = "+7 908 455-16-35";
-const phone = "79084551635";
-const whatsappLink =
-  `https://wa.me/${phone}?text=${encodeURIComponent("Здравствуйте! Хочу заказать шары или оформление праздника.")}`;
+const contacts = [
+  { name: "Екатерина", phoneDisplay: "+7 924 337-01-23", phone: "79243370123" },
+  { name: "Наталья", phoneDisplay: "+7 924 336-30-07", phone: "79243363007" },
+];
+
+const orderMessage = "Здравствуйте! Хочу заказать воздушные шары или оформление праздника.";
+const getWhatsappLink = (phone: string) =>
+  `https://wa.me/${phone}?text=${encodeURIComponent(orderMessage)}`;
+const primaryWhatsappLink = getWhatsappLink(contacts[0].phone);
 const telegramLink =
-  `https://t.me/+${phone}?text=${encodeURIComponent("Здравствуйте! Хочу заказать шары или оформление праздника.")}&profile`;
+  `https://t.me/+${contacts[0].phone}?text=${encodeURIComponent(orderMessage)}&profile`;
 
 const services = [
-  { title: "Воздушные шары", price: "от 150 ₽", note: "Латексные, фольгированные, с надписями", image: "/images/works/work-001.jpeg", alt: "Белая персональная композиция из воздушных шаров" },
+  { title: "Воздушные шары", price: "от 150 ₽", note: "Латексные, фольгированные, с надписями", image: "/images/works/work-090.jpeg", alt: "Голубая персональная композиция из воздушных шаров на первый день рождения" },
   { title: "Букеты из шаров", price: "от 700 ₽", note: "Композиции под повод, возраст и бюджет", image: "/images/works/work-004.jpeg", alt: "Серебряно-белый букет из воздушных шаров" },
   { title: "Гендер-пати", price: "от 1 500 ₽", note: "Большие шары, коробки и тематический декор", image: "/images/works/work-108.jpeg", alt: "Большая композиция для гендер-пати" },
   { title: "День рождения", price: "от 1 500 ₽", note: "Цифры, фонтаны, коробки-сюрпризы", image: "/images/works/work-069.jpeg", alt: "Розово-золотая фотозона на день рождения" },
@@ -37,27 +42,28 @@ export default function Home() {
           <span className="brand-mark">Ш</span>
           <span>
             <strong>Шарик</strong>
-            <small>студия декора</small>
+            <small>воздушные шары и оформление</small>
           </span>
         </a>
         <nav aria-label="Основная навигация">
           <a href="#services">Услуги</a>
           <a href="/works">Работы</a>
           <a href="#about">О нас</a>
+          <a href="#contacts">Контакты</a>
         </nav>
-        <a className="header-phone" href={`tel:+${phone}`}>{phoneDisplay}</a>
+        <a className="header-phone" href="#contacts">Екатерина · Наталья</a>
       </header>
 
       <section className="hero" id="top">
         <div className="hero-copy">
           <p className="eyebrow">Уссурийск · Приморский край · 7 дней в неделю</p>
-          <h1>Воздушные шары и декор для красивых праздников</h1>
+          <h1>Воздушные шары и студия оформления праздников</h1>
           <p className="hero-lead">
             Воздушные шары, фотозоны и оформление событий — подберём идею,
             палитру и состав композиции под ваш повод и бюджет.
           </p>
           <div className="hero-actions">
-            <a className="button button-primary" href={whatsappLink}>Заказать в WhatsApp <span>↗</span></a>
+            <a className="button button-primary" href={primaryWhatsappLink}>Заказать в WhatsApp <span>↗</span></a>
             <a className="button button-ghost" href="#services">Посмотреть цены</a>
           </div>
           <div className="hero-facts">
@@ -106,7 +112,7 @@ export default function Home() {
                 <p>{service.note}</p>
                 <div className="service-meta">
                   <strong>{service.price}</strong>
-                  <a href={whatsappLink} aria-label={`Узнать стоимость: ${service.title}`}>Уточнить <span>↗</span></a>
+                  <a href={primaryWhatsappLink} aria-label={`Узнать стоимость: ${service.title}`}>Уточнить <span>↗</span></a>
                 </div>
               </div>
             </article>
@@ -120,7 +126,7 @@ export default function Home() {
             <p className="eyebrow">Наши работы</p>
             <h2>Идеи, которые становятся атмосферой</h2>
           </div>
-          <a className="text-link" href={whatsappLink}>Хочу похожее <span>↗</span></a>
+          <a className="text-link" href={primaryWhatsappLink}>Хочу похожее <span>↗</span></a>
         </div>
         <div className="gallery-grid">
           {gallery.map((image) => (
@@ -133,6 +139,35 @@ export default function Home() {
           <a className="button button-ghost" href="/works">
             Смотреть все работы <span>→</span>
           </a>
+        </div>
+      </section>
+
+      <section className="section studio-section" id="studio">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Всё делаем сами</p>
+            <h2>От личной надписи до готового оформления</h2>
+          </div>
+          <p>Подбираем шары и ленты, создаём макет, печатаем персональный текст или фотографию и собираем заказ в нашей студии.</p>
+        </div>
+        <div className="studio-grid">
+          <article className="studio-card">
+            <img src="/images/custom-printing.jpeg" alt="Рабочее место студии Шарик для печати надписей и фотографий на воздушных шарах" loading="lazy" />
+            <div>
+              <p className="eyebrow">Печать на шарах</p>
+              <h3>Надписи и фотографии</h3>
+              <p>Напечатаем имя, дату, поздравление, логотип или фотографию — всё, что можно аккуратно нанести на шар.</p>
+            </div>
+          </article>
+          <article className="studio-card storefront-card">
+            <img src="/images/storefront.jpeg" alt="Вход в студию воздушных шаров Шарик на улице Садовой, 3г в Уссурийске" loading="lazy" />
+            <div>
+              <p className="eyebrow">Наша студия</p>
+              <h3>Садовая, 3г</h3>
+              <p>Здесь можно посмотреть материалы, выбрать оттенки и оформить заказ. Работаем ежедневно: Пн–Сб 10:00–19:00, Вс 10:00–18:00.</p>
+              <a className="text-link" href="#contacts">Связаться перед визитом <span>↓</span></a>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -166,15 +201,26 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="contact-section">
+      <section className="contact-section" id="contacts">
         <div>
           <p className="eyebrow">Обсудим ваш праздник?</p>
           <h2>Пришлите пример — подберём идею и посчитаем стоимость</h2>
         </div>
         <div className="contact-actions">
-          <a className="contact-button whatsapp" href={whatsappLink}><span>WA</span><b>Написать в WhatsApp</b><i>↗</i></a>
-          <a className="contact-button telegram" href={telegramLink}><span>TG</span><b>Написать в Telegram</b><i>↗</i></a>
-          <a className="contact-button phone" href={`tel:+${phone}`}><span>☎</span><b>{phoneDisplay}</b><i>↗</i></a>
+          {contacts.map((contact) => (
+            <article className="contact-person" key={contact.phone}>
+              <div>
+                <span>Ваш менеджер</span>
+                <h3>{contact.name}</h3>
+                <a href={`tel:+${contact.phone}`}>{contact.phoneDisplay}</a>
+              </div>
+              <div className="contact-person-actions">
+                <a className="contact-chip whatsapp" href={getWhatsappLink(contact.phone)}>WhatsApp <span>↗</span></a>
+                <a className="contact-chip phone" href={`tel:+${contact.phone}`}>Позвонить <span>↗</span></a>
+              </div>
+            </article>
+          ))}
+          <a className="contact-button telegram" href={telegramLink}><span>TG</span><b>Написать Екатерине в Telegram</b><i>↗</i></a>
         </div>
       </section>
 
@@ -182,12 +228,13 @@ export default function Home() {
         <div className="footer-main">
           <a className="brand brand-footer" href="#top">
             <span className="brand-mark">Ш</span>
-            <span><strong>Шарик</strong><small>студия декора</small></span>
+            <span><strong>Шарик</strong><small>воздушные шары и оформление</small></span>
           </a>
           <p>Создаём атмосферу вашего праздника в Приморском крае</p>
           <div className="footer-details">
             <span>Садовая, 3г</span>
             <span>Пн–Сб 10:00–19:00 · Вс 10:00–18:00</span>
+            <span>Екатерина {contacts[0].phoneDisplay} · Наталья {contacts[1].phoneDisplay}</span>
           </div>
         </div>
         <a className="footer-credit" href="https://24zxc.ru" target="_blank" rel="noopener noreferrer">
