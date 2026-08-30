@@ -56,13 +56,17 @@ export default function Metrika() {
       if (!link) return;
 
       const href = link.href;
-      let goal: string | undefined;
+      const goals = new Set<string>();
+      const explicitGoal = link.dataset.ymGoal;
+      if (explicitGoal) goals.add(explicitGoal);
 
-      if (href.includes("wa.me/")) goal = "whatsapp_click";
-      else if (href.includes("t.me/")) goal = "telegram_click";
-      else if (href.startsWith("tel:")) goal = "phone_click";
+      if (href.includes("wa.me/")) goals.add("whatsapp_click");
+      else if (href.includes("t.me/")) goals.add("telegram_click");
+      else if (href.startsWith("tel:")) goals.add("phone_click");
 
-      if (goal) window.ym?.(COUNTER_ID, "reachGoal", goal);
+      for (const goal of goals) {
+        window.ym?.(COUNTER_ID, "reachGoal", goal);
+      }
     };
 
     document.addEventListener("click", trackContactClick);

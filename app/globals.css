@@ -320,6 +320,131 @@ h1 {
   font-size: 24px;
 }
 
+.flowers-section {
+  background:
+    radial-gradient(circle at 88% 10%, rgba(240, 113, 156, 0.22), transparent 26%),
+    linear-gradient(145deg, #fff7f2 0%, #f9e8ee 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+.flowers-section::before {
+  border: 1px solid rgba(191, 60, 112, 0.18);
+  border-radius: 50%;
+  content: "";
+  height: 420px;
+  position: absolute;
+  right: -190px;
+  top: -210px;
+  width: 420px;
+}
+
+.flower-intro {
+  align-items: end;
+  display: grid;
+  gap: 60px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.65fr);
+  margin-bottom: 58px;
+  position: relative;
+  z-index: 1;
+}
+
+.flower-intro h2 {
+  max-width: 850px;
+}
+
+.flower-intro-copy {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.flower-intro-copy p {
+  color: #665d61;
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.flower-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  position: relative;
+  z-index: 1;
+}
+
+.flower-card {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(30, 26, 29, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 18px 48px rgba(99, 43, 66, 0.09);
+  overflow: hidden;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.flower-card:hover {
+  box-shadow: 0 24px 62px rgba(99, 43, 66, 0.16);
+  transform: translateY(-4px);
+}
+
+.flower-image {
+  aspect-ratio: 1 / 0.88;
+  background: var(--cream);
+  overflow: hidden;
+  position: relative;
+}
+
+.flower-image img {
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms ease;
+}
+
+.flower-card:hover .flower-image img {
+  transform: scale(1.035);
+}
+
+.flower-image span {
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 100px;
+  color: var(--pink-dark);
+  font-size: 10px;
+  font-weight: 800;
+  left: 16px;
+  letter-spacing: 0.14em;
+  padding: 9px 12px;
+  position: absolute;
+  text-transform: uppercase;
+  top: 16px;
+}
+
+.flower-card-copy {
+  padding: 24px 24px 26px;
+}
+
+.flower-card h3 {
+  font-family: Georgia, serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.08;
+  margin: 0 0 10px;
+}
+
+.flower-card-copy p {
+  color: #756b70;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0 0 22px;
+}
+
+.flower-card-copy a {
+  color: var(--pink-dark);
+  font-size: 11px;
+  font-weight: 800;
+}
+
 .section {
   padding: 112px clamp(22px, 7vw, 130px);
 }
@@ -986,6 +1111,10 @@ footer {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .flower-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .studio-card > img {
     height: 360px;
   }
@@ -1068,6 +1197,7 @@ footer {
   }
 
   .section-heading,
+  .flower-intro,
   .gallery-heading,
   .about-section,
   .contact-section,
@@ -1087,6 +1217,19 @@ footer {
 
   .services-grid {
     grid-template-columns: 1fr;
+  }
+
+  .flower-intro {
+    gap: 24px;
+    margin-bottom: 42px;
+  }
+
+  .flower-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .flower-image {
+    aspect-ratio: 1 / 0.92;
   }
 
   .studio-grid {

@@ -1,12 +1,18 @@
+import SeasonalFlowerTitle from "./SeasonalFlowerTitle";
+
 const contacts = [
   { name: "Екатерина", phoneDisplay: "+7 924 337-01-23", phone: "79243370123" },
   { name: "Наталья", phoneDisplay: "+7 924 336-30-07", phone: "79243363007" },
 ];
 
-const orderMessage = "Здравствуйте! Хочу заказать воздушные шары или оформление праздника.";
+const orderMessage = "Здравствуйте! Хочу заказать цветы, воздушные шары или оформление праздника.";
 const getWhatsappLink = (phone: string) =>
   `https://wa.me/${phone}?text=${encodeURIComponent(orderMessage)}`;
 const primaryWhatsappLink = getWhatsappLink(contacts[0].phone);
+const getFlowerWhatsappLink = (title: string) =>
+  `https://wa.me/${contacts[0].phone}?text=${encodeURIComponent(
+    `Здравствуйте! Хочу заказать цветы. Подскажите, пожалуйста, состав и стоимость букета «${title}».`,
+  )}`;
 const telegramLink =
   `https://t.me/+${contacts[0].phone}?text=${encodeURIComponent(orderMessage)}&profile`;
 
@@ -36,6 +42,18 @@ const gallery = [
   { src: "/images/party.jpeg", alt: "Яркая фотозона для вечеринки", className: "" },
 ];
 
+const flowerBouquets = [
+  { title: "Нежный розово-белый микс", image: "/images/flowers/flower-01.jpeg", alt: "Нежный букет в розовых и белых тонах" },
+  { title: "Красно-белая классика", image: "/images/flowers/flower-02.jpeg", alt: "Красно-белый букет в бордовой упаковке" },
+  { title: "Бело-розовый букет", image: "/images/flowers/flower-03.jpeg", alt: "Бело-розовый букет в нежной упаковке" },
+  { title: "Воздушный пастельный букет", image: "/images/flowers/flower-04.jpeg", alt: "Воздушный букет в белых и пастельно-розовых оттенках" },
+  { title: "Ярко-розовый букет", image: "/images/flowers/flower-05.jpeg", alt: "Ярко-розовый букет с белыми цветами и зеленью" },
+  { title: "Пудровый микс", image: "/images/flowers/flower-06.jpeg", alt: "Пудрово-розовый смешанный букет" },
+  { title: "Красный акцент", image: "/images/flowers/flower-07.jpeg", alt: "Букет с красными и белыми цветами" },
+  { title: "Компактный красно-белый букет", image: "/images/flowers/flower-08.jpeg", alt: "Компактный букет в красных и белых тонах" },
+  { title: "Контрастный букет", image: "/images/flowers/flower-09.jpeg", alt: "Контрастный букет с красными и белыми цветами" },
+];
+
 export default function Home() {
   return (
     <main>
@@ -49,6 +67,7 @@ export default function Home() {
         </a>
         <nav aria-label="Основная навигация">
           <a href="#services">Услуги</a>
+          <a href="#flowers">Цветы</a>
           <a href="/works">Работы</a>
           <a href="#about">О нас</a>
           <a href="#contacts">Контакты</a>
@@ -61,7 +80,7 @@ export default function Home() {
           <p className="eyebrow">Уссурийск · Приморский край · 7 дней в неделю</p>
           <h1>Воздушные шары и студия оформления праздников</h1>
           <p className="hero-lead">
-            Воздушные шары, фотозоны, пресс-воллы, свадебные президиумы и
+            Свежие цветы, воздушные шары, фотозоны, пресс-воллы, свадебные президиумы и
             оформление выпускных в школах и детских садах — подберём решение
             под ваш повод и бюджет.
           </p>
@@ -90,9 +109,53 @@ export default function Home() {
       </section>
 
       <section className="occasions" aria-label="Популярные поводы">
-        <span>Фотозоны</span><i>•</i><span>Пресс-воллы</span><i>•</i>
+        <span>Свежие цветы</span><i>•</i><span>Фотозоны</span><i>•</i><span>Пресс-воллы</span><i>•</i>
         <span>Свадебный президиум</span><i>•</i><span>Выпускные</span><i>•</i>
         <span>Школы</span><i>•</i><span>Детские сады</span>
+      </section>
+
+      <section className="section flowers-section" id="flowers">
+        <div className="flower-intro">
+          <div>
+            <p className="eyebrow">Новинка в студии</p>
+            <SeasonalFlowerTitle />
+          </div>
+          <div className="flower-intro-copy">
+            <p>
+              Соберём букет к школе, празднику или просто без повода. Состав и
+              итоговая стоимость зависят от наличия цветов и желаемого размера —
+              уточните актуальные варианты в WhatsApp.
+            </p>
+            <a
+              className="button button-primary"
+              data-ym-goal="flower_order_click"
+              href={getFlowerWhatsappLink("букет по вашему бюджету")}
+            >
+              Подобрать букет <span>↗</span>
+            </a>
+          </div>
+        </div>
+        <div className="flower-grid">
+          {flowerBouquets.map((bouquet) => (
+            <article className="flower-card" key={bouquet.title}>
+              <div className="flower-image">
+                <img src={bouquet.image} alt={bouquet.alt} loading="lazy" />
+                <span>Новинка</span>
+              </div>
+              <div className="flower-card-copy">
+                <h3>{bouquet.title}</h3>
+                <p>Состав и размер подберём под ваш бюджет.</p>
+                <a
+                  data-ym-goal="flower_order_click"
+                  href={getFlowerWhatsappLink(bouquet.title)}
+                  aria-label={`Узнать состав и стоимость: ${bouquet.title}`}
+                >
+                  Узнать состав и стоимость <span>↗</span>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="section services-section" id="services">
