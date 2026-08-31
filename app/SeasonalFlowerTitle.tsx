@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 const SCHOOL_PROMO_END = new Date("2026-09-02T00:00:00+10:00").getTime();
 
 export default function SeasonalFlowerTitle() {
-  const [schoolPromoIsActive, setSchoolPromoIsActive] = useState(true);
+  // Keep the server-rendered SEO copy evergreen. Before the cutoff, the
+  // browser promotes the seasonal wording after hydration.
+  const [schoolPromoIsActive, setSchoolPromoIsActive] = useState(false);
 
   useEffect(() => {
     const update = () => setSchoolPromoIsActive(Date.now() < SCHOOL_PROMO_END);

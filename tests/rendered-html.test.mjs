@@ -11,7 +11,8 @@ async function read(relativePath) {
 test("publishes the flower launch on the main page", async () => {
   const html = await read("out/index.html");
 
-  assert.match(html, /К 1 сентября — свежие цветы уже в «Шарике»/);
+  assert.match(html, /Свежие цветы теперь в «Шарике»/);
+  assert.doesNotMatch(html, /К 1 сентября — свежие цветы уже в «Шарике»/);
   assert.match(html, /Подобрать букет/);
   assert.match(html, /flower_order_click/);
   assert.match(html, /111239502/);
