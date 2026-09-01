@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import MessengerAttribution from "./MessengerAttribution";
 import Metrika from "./Metrika";
 
 export const metadata: Metadata = {
@@ -66,6 +67,7 @@ export default function RootLayout({
     <html lang="ru">
       <body>
         <Metrika />
+        <MessengerAttribution />
         <noscript>
           <div>
             <img

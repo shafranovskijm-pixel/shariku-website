@@ -5,13 +5,20 @@ const contacts = [
   { name: "Наталья", phoneDisplay: "+7 924 336-30-07", phone: "79243363007" },
 ];
 
-const orderMessage = "Здравствуйте! Хочу заказать цветы, воздушные шары или оформление праздника.";
-const getWhatsappLink = (phone: string) =>
-  `https://wa.me/${phone}?text=${encodeURIComponent(orderMessage)}`;
+const sourceIntro = "Здравствуйте! Пишу с сайта shariku.ru.";
+const getWhatsappMessage = (subject: string) =>
+  `${sourceIntro} Интересует: ${subject}. Подскажите, пожалуйста, стоимость и ближайший срок.`;
+const orderMessage = getWhatsappMessage(
+  "цветы, воздушные шары или оформление праздника",
+);
+const getWhatsappLink = (phone: string, subject?: string) =>
+  `https://wa.me/${phone}?text=${encodeURIComponent(
+    subject ? getWhatsappMessage(subject) : orderMessage,
+  )}`;
 const primaryWhatsappLink = getWhatsappLink(contacts[0].phone);
 const getFlowerWhatsappLink = (title: string) =>
   `https://wa.me/${contacts[0].phone}?text=${encodeURIComponent(
-    `Здравствуйте! Хочу заказать цветы. Подскажите, пожалуйста, состав и стоимость букета «${title}».`,
+    `${sourceIntro} Хочу заказать цветы. Подскажите, пожалуйста, состав и стоимость букета «${title}».`,
   )}`;
 const telegramLink =
   `https://t.me/+${contacts[0].phone}?text=${encodeURIComponent(orderMessage)}&profile`;
@@ -66,13 +73,19 @@ export default function Home() {
           </span>
         </a>
         <nav aria-label="Основная навигация">
-          <a href="#services">Услуги</a>
-          <a href="#flowers">Цветы</a>
+          <a href="/balloons/">Шары</a>
+          <a href="/flowers/">Цветы</a>
+          <a href="/event-decoration/">Оформление</a>
           <a href="/works">Работы</a>
-          <a href="#about">О нас</a>
           <a href="#contacts">Контакты</a>
         </nav>
-        <a className="header-phone" href="#contacts">Екатерина · Наталья</a>
+        <a
+          className="header-phone"
+          href={`tel:+${contacts[0].phone}`}
+          aria-label={`Позвонить Екатерине по номеру ${contacts[0].phoneDisplay}`}
+        >
+          Позвонить Екатерине
+        </a>
       </header>
 
       <section className="hero" id="top">
@@ -178,7 +191,7 @@ export default function Home() {
                 <p>{service.note}</p>
                 <div className="service-meta">
                   <strong>{service.price}</strong>
-                  <a href={primaryWhatsappLink} aria-label={`Узнать стоимость: ${service.title}`}>Уточнить <span>↗</span></a>
+                  <a href={getWhatsappLink(contacts[0].phone, service.title)} aria-label={`Узнать стоимость: ${service.title}`}>Уточнить <span>↗</span></a>
                 </div>
               </div>
             </article>
@@ -192,7 +205,7 @@ export default function Home() {
             <p className="eyebrow">Наши работы</p>
             <h2>Идеи, которые становятся атмосферой</h2>
           </div>
-          <a className="text-link" href={primaryWhatsappLink}>Хочу похожее <span>↗</span></a>
+          <a className="text-link" href={getWhatsappLink(contacts[0].phone, "оформление, похожее на работу из портфолио")}>Хочу похожее <span>↗</span></a>
         </div>
         <div className="gallery-grid">
           {gallery.map((image) => (

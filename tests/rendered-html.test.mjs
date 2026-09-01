@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
+import { appendMarketingSource } from "../app/marketing-attribution.ts";
+
 const root = new URL("../", import.meta.url);
 
 async function read(relativePath) {
@@ -26,6 +28,81 @@ test("publishes the flower launch on the main page", async () => {
   assert.equal(flowerImages.size, 9);
 });
 
+test("identifies Shariku and the requested service in WhatsApp messages", async () => {
+  const html = await read("out/index.html");
+  const messages = [...html.matchAll(/href="(https:\/\/wa\.me\/[^\"]+)"/g)].map(
+    ([, href]) =>
+      new URL(href.replaceAll("&amp;", "&")).searchParams.get("text") ?? "",
+  );
+
+  assert.ok(messages.length >= 20);
+  assert.ok(messages.every((message) => message.includes("Пишу с сайта shariku.ru")));
+
+  for (const subject of [
+    "Воздушные шары",
+    "Выпускные, школы и детские сады",
+    "Пресс-воллы и бренд-зоны",
+    "Фотозоны",
+    "Свадебное оформление",
+    "оформление, похожее на работу из портфолио",
+  ]) {
+    assert.ok(messages.some((message) => message.includes(subject)), subject);
+  }
+
+  const telegramHref = html.match(/href="(https:\/\/t\.me\/[^\"]+)"/)?.[1];
+  assert.ok(telegramHref);
+  const telegramMessage = new URL(
+    telegramHref.replaceAll("&amp;", "&"),
+  ).searchParams.get("text");
+  assert.match(telegramMessage ?? "", /Пишу с сайта shariku\.ru/);
+});
+
+test("identifies Shariku in the portfolio WhatsApp message", async () => {
+  const html = await read("out/works/index.html");
+  const href = html.match(/href="(https:\/\/wa\.me\/[^\"]+)"/)?.[1];
+  assert.ok(href);
+  const message = new URL(href.replaceAll("&amp;", "&")).searchParams.get("text");
+
+  assert.match(message ?? "", /Пишу с сайта shariku\.ru/);
+  assert.match(message ?? "", /ваши работы/);
+});
+
+test("adds useful ad attribution to WhatsApp without exposing yclid", () => {
+  const base =
+    "https://wa.me/79243370123?text=" +
+    encodeURIComponent("Здравствуйте! Интересуют воздушные шары.");
+  const landing =
+    "https://shariku.ru/balloons/?yclid=secret-click-id&utm_source=yandex&utm_campaign=shariku_search&utm_content=balloons_1";
+
+  const attributed = appendMarketingSource(base, landing);
+  const message = new URL(attributed).searchParams.get("text") ?? "";
+
+  assert.match(message, /Источник обращения: Яндекс\.Директ/);
+  assert.match(message, /кампания shariku_search/);
+  assert.match(message, /объявление balloons_1/);
+  assert.doesNotMatch(message, /secret-click-id/);
+  assert.equal(appendMarketingSource(attributed, landing), attributed);
+});
+
+test("does not alter organic WhatsApp links", () => {
+  const base =
+    "https://wa.me/79243370123?text=" +
+    encodeURIComponent("Здравствуйте! Хочу уточнить стоимость.");
+
+  assert.equal(appendMarketingSource(base, "https://shariku.ru/flowers/"), base);
+});
+
+test("makes the mobile header call action a real phone link", async () => {
+  const html = await read("out/index.html");
+  const headerPhone = html.match(
+    /<a[^>]*class="header-phone"[^>]*href="([^"]+)"[^>]*>/,
+  );
+
+  assert.ok(headerPhone);
+  assert.equal(headerPhone[1], "tel:+79243370123");
+  assert.match(html, /aria-label="Позвонить Екатерине по номеру \+7 924 337-01-23"/);
+});
+
 test("keeps the post-campaign flower copy and Vladivostok cutoff", async () => {
   const source = await read("app/SeasonalFlowerTitle.tsx");
 
@@ -42,4 +119,44 @@ test("keeps portfolio and SEO routes available", async () => {
   assert.match(works, /Наши работы/);
   assert.match(sitemap, /https:\/\/shariku\.ru\//);
   assert.match(sitemap, /https:\/\/shariku\.ru\/works\//);
+  assert.match(sitemap, /https:\/\/shariku\.ru\/flowers\//);
+  assert.match(sitemap, /https:\/\/shariku\.ru\/balloons\//);
+  assert.match(sitemap, /https:\/\/shariku\.ru\/event-decoration\//);
+});
+
+test("renders focused category landings with canonical metadata and precise CTA context", async () => {
+  const cases = [
+    {
+      file: "out/flowers/index.html",
+      canonical: "https://shariku.ru/flowers/",
+      heading: "Цветы и букеты в Уссурийске",
+      subject: "букет по вашему бюджету",
+    },
+    {
+      file: "out/balloons/index.html",
+      canonical: "https://shariku.ru/balloons/",
+      heading: "Воздушные шары в Уссурийске",
+      subject: "воздушные шары — повод, дата и желаемый бюджет",
+    },
+    {
+      file: "out/event-decoration/index.html",
+      canonical: "https://shariku.ru/event-decoration/",
+      heading: "Оформление праздников и фотозоны в Уссурийске",
+      subject: "оформление праздника — повод, дата, площадка и бюджет",
+    },
+  ];
+
+  for (const item of cases) {
+    const html = await read(item.file);
+    assert.match(html, new RegExp(`<h1>${item.heading}</h1>`));
+    assert.match(html, new RegExp(`rel="canonical" href="${item.canonical}"`));
+    assert.match(html, /"@type":"Service"/);
+    assert.match(html, /"@type":"FAQPage"/);
+
+    const href = html.match(/href="(https:\/\/wa\.me\/[^"]+)"/)?.[1];
+    assert.ok(href, item.file);
+    const message = new URL(href.replaceAll("&amp;", "&")).searchParams.get("text") ?? "";
+    assert.match(message, /Пишу с сайта shariku\.ru/);
+    assert.ok(message.includes(item.subject), item.subject);
+  }
 });

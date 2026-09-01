@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 const phoneDisplay = "+7 924 337-01-23";
 const phone = "79243370123";
 const whatsappLink =
-  `https://wa.me/${phone}?text=${encodeURIComponent("Здравствуйте! Посмотрел(а) ваши работы на сайте. Хочу обсудить оформление праздника.")}`;
+  `https://wa.me/${phone}?text=${encodeURIComponent("Здравствуйте! Пишу с сайта shariku.ru. Посмотрел(а) ваши работы и хочу обсудить оформление праздника.")}`;
 
 const works = [
   { src: "/images/works/work-004.jpeg", alt: "Серебряно-белый букет шаров для пары", category: "Композиции" },
