@@ -19,6 +19,7 @@ test("publishes the flower launch on the main page", async () => {
   assert.match(html, /flower_order_click/);
   assert.match(html, /111239502/);
   assert.match(html, /Цветы и воздушные шары в Уссурийске/);
+  assert.doesNotMatch(html, /href="\/works"/);
 
   const flowerImages = new Set(
     [...html.matchAll(/\/images\/flowers\/flower-\d{2}\.jpeg/g)].map(
@@ -122,6 +123,7 @@ test("keeps portfolio and SEO routes available", async () => {
   assert.match(sitemap, /https:\/\/shariku\.ru\/flowers\//);
   assert.match(sitemap, /https:\/\/shariku\.ru\/balloons\//);
   assert.match(sitemap, /https:\/\/shariku\.ru\/event-decoration\//);
+  assert.doesNotMatch(sitemap, /<lastmod>/);
 });
 
 test("renders focused category landings with canonical metadata and precise CTA context", async () => {
@@ -152,6 +154,10 @@ test("renders focused category landings with canonical metadata and precise CTA 
     assert.match(html, new RegExp(`rel="canonical" href="${item.canonical}"`));
     assert.match(html, /"@type":"Service"/);
     assert.match(html, /"@type":"FAQPage"/);
+    assert.match(html, /property="og:type" content="website"/);
+    assert.match(html, /property="og:locale" content="ru_RU"/);
+    assert.match(html, /property="og:site_name" content="Студия оформления «Шарик»"/);
+    assert.doesNotMatch(html, /Студия «Шарик» \| Студия «Шарик»/i);
 
     const href = html.match(/href="(https:\/\/wa\.me\/[^"]+)"/)?.[1];
     assert.ok(href, item.file);
@@ -159,4 +165,14 @@ test("renders focused category landings with canonical metadata and precise CTA 
     assert.match(message, /Пишу с сайта shariku\.ru/);
     assert.ok(message.includes(item.subject), item.subject);
   }
+});
+
+test("gives the portfolio its own social metadata and category links", async () => {
+  const html = await read("out/works/index.html");
+
+  assert.match(html, /name="twitter:title" content="Работы студии оформления «Шарик»"/);
+  assert.match(html, /name="twitter:image" content="https:\/\/shariku\.ru\/images\/works\/work-069\.jpeg"/);
+  assert.match(html, /href="\/flowers\/"/);
+  assert.match(html, /href="\/balloons\/"/);
+  assert.match(html, /href="\/event-decoration\/"/);
 });

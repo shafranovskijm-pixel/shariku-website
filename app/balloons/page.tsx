@@ -3,11 +3,14 @@ import type { Metadata } from "next";
 import CategoryLanding, { type CategoryLandingData } from "../CategoryLanding";
 
 export const metadata: Metadata = {
-  title: "Воздушные шары в Уссурийске — студия «Шарик»",
+  title: "Воздушные шары в Уссурийске",
   description:
     "Латексные и фольгированные шары, букеты и композиции, цифры, фонтаны, надписи и фотографии на шарах в Уссурийске. Подбор под повод и бюджет.",
   alternates: { canonical: "/balloons/" },
   openGraph: {
+    type: "website",
+    locale: "ru_RU",
+    siteName: "Студия оформления «Шарик»",
     url: "/balloons/",
     title: "Воздушные шары в Уссурийске — студия «Шарик»",
     description: "Композиции, букеты из шаров, цифры и персональная печать под ваш повод.",

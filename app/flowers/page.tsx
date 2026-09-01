@@ -3,11 +3,14 @@ import type { Metadata } from "next";
 import CategoryLanding, { type CategoryLandingData } from "../CategoryLanding";
 
 export const metadata: Metadata = {
-  title: "Цветы и букеты в Уссурийске — студия «Шарик»",
+  title: "Цветы и букеты в Уссурийске",
   description:
     "Свежие цветы и букеты в Уссурийске: розово-белые, красно-белые, пастельные и компактные композиции. Подберём состав и размер под ваш бюджет.",
   alternates: { canonical: "/flowers/" },
   openGraph: {
+    type: "website",
+    locale: "ru_RU",
+    siteName: "Студия оформления «Шарик»",
     url: "/flowers/",
     title: "Цветы и букеты в Уссурийске — студия «Шарик»",
     description: "Букеты под повод, палитру и бюджет. Актуальный состав уточним перед заказом.",

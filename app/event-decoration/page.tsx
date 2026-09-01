@@ -3,11 +3,14 @@ import type { Metadata } from "next";
 import CategoryLanding, { type CategoryLandingData } from "../CategoryLanding";
 
 export const metadata: Metadata = {
-  title: "Оформление праздников и фотозоны в Уссурийске — «Шарик»",
+  title: "Оформление праздников и фотозоны в Уссурийске",
   description:
     "Фотозоны, пресс-воллы, арки, свадебные президиумы и оформление выпускных, школ и детских садов в Уссурийске. Доставка и монтаж по договорённости.",
   alternates: { canonical: "/event-decoration/" },
   openGraph: {
+    type: "website",
+    locale: "ru_RU",
+    siteName: "Студия оформления «Шарик»",
     url: "/event-decoration/",
     title: "Оформление праздников и фотозоны в Уссурийске",
     description: "Фотозоны, пресс-воллы, свадьбы, выпускные, школы и детские сады.",

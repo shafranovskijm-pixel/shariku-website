@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     siteName: "Студия оформления «Шарик»",
     title: "Цветы, воздушные шары и оформление праздников в Уссурийске",
     description: "Свежие букеты, воздушные шары, фотозоны и оформление событий с доставкой по Уссурийску.",
-    images: [{ url: "/images/flowers/flower-01.jpeg", width: 1037, height: 837, alt: "Нежный букет цветов студии Шарик" }],
+    images: [{ url: "/images/flowers/flower-01.jpeg", width: 1037, height: 839, alt: "Нежный букет цветов студии Шарик" }],
   },
   twitter: {
     card: "summary_large_image",

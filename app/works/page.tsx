@@ -6,10 +6,19 @@ export const metadata: Metadata = {
   description: "Портфолио студии «Шарик»: фотозоны, композиции из воздушных шаров, оформление свадеб, выпускных и дней рождения в Уссурийске.",
   alternates: { canonical: "/works/" },
   openGraph: {
+    type: "website",
+    locale: "ru_RU",
+    siteName: "Студия оформления «Шарик»",
     url: "/works/",
     title: "Работы студии оформления «Шарик»",
     description: "Реальные фотозоны и композиции из воздушных шаров в Уссурийске.",
-    images: [{ url: "/images/works/work-069.jpeg", width: 1080, height: 1350, alt: "Фотозона студии Шарик" }],
+    images: [{ url: "/images/works/work-069.jpeg", width: 1054, height: 1163, alt: "Фотозона студии Шарик" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Работы студии оформления «Шарик»",
+    description: "Фотозоны, композиции из воздушных шаров и оформление праздников в Уссурийске.",
+    images: ["/images/works/work-069.jpeg"],
   },
 };
 
@@ -68,8 +77,9 @@ export default function WorksPage() {
         </Link>
         <nav aria-label="Навигация по сайту">
           <Link href="/">Главная</Link>
-          <Link href="/#services">Услуги</Link>
-          <Link href="/#about">О нас</Link>
+          <Link href="/flowers/">Цветы</Link>
+          <Link href="/balloons/">Шары</Link>
+          <Link href="/event-decoration/">Оформление</Link>
         </nav>
         <a className="header-phone" href={`tel:+${phone}`}>{phoneDisplay}</a>
       </header>

@@ -119,7 +119,7 @@ export default function CategoryLanding({ data }: { data: CategoryLandingData })
       <nav className="category-breadcrumb" aria-label="Хлебные крошки">
         <Link href="/">Главная</Link>
         <span aria-hidden="true">/</span>
-        <span>{data.eyebrow}</span>
+        <span>{data.title}</span>
       </nav>
 
       <section className="category-hero">

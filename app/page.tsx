@@ -76,7 +76,7 @@ export default function Home() {
           <a href="/balloons/">Шары</a>
           <a href="/flowers/">Цветы</a>
           <a href="/event-decoration/">Оформление</a>
-          <a href="/works">Работы</a>
+          <a href="/works/">Работы</a>
           <a href="#contacts">Контакты</a>
         </nav>
         <a
@@ -215,7 +215,7 @@ export default function Home() {
           ))}
         </div>
         <div className="gallery-more">
-          <a className="button button-ghost" href="/works">
+          <a className="button button-ghost" href="/works/">
             Смотреть все работы <span>→</span>
           </a>
         </div>
