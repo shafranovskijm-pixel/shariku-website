@@ -1,4 +1,9 @@
+import type { Metadata } from "next";
 import SeasonalFlowerTitle from "./SeasonalFlowerTitle";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const contacts = [
   { name: "Екатерина", phoneDisplay: "+7 924 337-01-23", phone: "79243370123" },

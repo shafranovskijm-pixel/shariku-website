@@ -30,9 +30,6 @@ export const metadata: Metadata = {
     "печать на шарах Уссурийск",
     "студия оформления Шарик",
   ],
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     type: "website",
     locale: "ru_RU",
@@ -47,10 +44,6 @@ export const metadata: Metadata = {
     title: "Студия оформления «Шарик» — Уссурийск",
     description: "Свежие цветы, воздушные шары, фотозоны и оформление праздников.",
     images: ["/images/flowers/flower-01.jpeg"],
-  },
-  robots: {
-    index: true,
-    follow: true,
   },
   icons: {
     icon: "/favicon.svg",

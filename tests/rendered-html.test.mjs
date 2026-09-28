@@ -176,3 +176,45 @@ test("gives the portfolio its own social metadata and category links", async () 
   assert.match(html, /href="\/balloons\/"/);
   assert.match(html, /href="\/event-decoration\/"/);
 });
+
+test("keeps all five public pages indexable with one self-canonical", async () => {
+  const paths = ["", "works/", "flowers/", "balloons/", "event-decoration/"];
+  const titles = new Set();
+  const descriptions = new Set();
+
+  for (const path of paths) {
+    const html = await read(`out/${path}index.html`);
+    const titleTags = [...html.matchAll(/<title>(.*?)<\/title>/g)];
+    const descriptionTags = [...html.matchAll(/<meta name="description" content="([^"]*)"\s*\/?\s*>/g)];
+    const canonicalTags = [...html.matchAll(/<link rel="canonical" href="([^"]*)"\s*\/?\s*>/g)];
+    const robotsTags = [...html.matchAll(/<meta name="robots" content="([^"]*)"\s*\/?\s*>/g)];
+
+    assert.equal(titleTags.length, 1, path);
+    assert.equal(descriptionTags.length, 1, path);
+    assert.equal(canonicalTags.length, 1, path);
+    assert.equal(canonicalTags[0][1], `https://shariku.ru/${path}`);
+    assert.ok(robotsTags.every(([, value]) => !/noindex|nofollow/i.test(value)), path);
+    assert.match(html, /<h1\b/, path);
+    titles.add(titleTags[0][1]);
+    descriptions.add(descriptionTags[0][1]);
+  }
+
+  assert.equal(titles.size, paths.length);
+  assert.equal(descriptions.size, paths.length);
+});
+
+test("exports a useful Russian 404 without home metadata or index directive", async () => {
+  const html = await read("out/404.html");
+  const titles = [...html.matchAll(/<title>(.*?)<\/title>/g)];
+  const robots = [...html.matchAll(/<meta name="robots" content="([^"]*)"\s*\/?\s*>/g)];
+
+  assert.deepEqual(titles.map(([, title]) => title), ["Страница не найдена — студия «Шарик»"]);
+  assert.deepEqual(robots.map(([, value]) => value), ["noindex"]);
+  assert.equal([...html.matchAll(/<meta name="description"(?:\s|\/?>)/g)].length, 1);
+  assert.doesNotMatch(html, /<link rel="canonical"(?:\s|\/?>)/);
+  assert.match(html, /<h1[^>]*>Страница не найдена<\/h1>/);
+  assert.doesNotMatch(html, /This page could not be found/);
+  for (const path of ["/", "/flowers/", "/balloons/", "/event-decoration/", "/works/"]) {
+    assert.ok(html.includes(`href="${path}"`), path);
+  }
+});
