@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SeasonalFlowerTitle from "./SeasonalFlowerTitle";
+import { YANDEX_MAPS_URL } from "./business-location";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -250,6 +251,7 @@ export default function Home() {
               <h3>Садовая, 3г</h3>
               <p>Здесь можно посмотреть материалы, выбрать оттенки и оформить заказ. Работаем ежедневно: Пн–Сб 10:00–19:00, Вс 10:00–18:00.</p>
               <a className="text-link" href="#contacts">Связаться перед визитом <span>↓</span></a>
+              <a className="text-link" href={YANDEX_MAPS_URL} target="_blank" rel="noopener noreferrer">Открыть в Яндекс Картах <span>↗</span></a>
             </div>
           </article>
         </div>
@@ -316,7 +318,7 @@ export default function Home() {
           </a>
           <p>Создаём атмосферу вашего праздника в Приморском крае</p>
           <div className="footer-details">
-            <span>Садовая, 3г</span>
+            <a href={YANDEX_MAPS_URL} target="_blank" rel="noopener noreferrer">Садовая, 3г · Открыть в Яндекс Картах ↗</a>
             <span>Пн–Сб 10:00–19:00 · Вс 10:00–18:00</span>
             <span>Екатерина {contacts[0].phoneDisplay} · Наталья {contacts[1].phoneDisplay}</span>
           </div>

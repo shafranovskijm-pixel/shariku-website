@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-import { appendMarketingSource } from "../app/marketing-attribution.ts";
+import { appendMarketingSource, marketingSourceHref, rememberMarketingSource } from "../app/marketing-attribution.ts";
 
 const root = new URL("../", import.meta.url);
 
@@ -91,6 +91,29 @@ test("does not alter organic WhatsApp links", () => {
     encodeURIComponent("Здравствуйте! Хочу уточнить стоимость.");
 
   assert.equal(appendMarketingSource(base, "https://shariku.ru/flowers/"), base);
+});
+
+test("keeps the ad source through untagged service pages without storing click IDs", () => {
+  const now = 100000;
+  const entry = "https://shariku.ru/?yclid=private-click&utm_source=yandex&utm_campaign=search&utm_content=balloons&email=private@example.test";
+  const stored = rememberMarketingSource(entry, null, now);
+  assert.doesNotMatch(stored, /private-click|private@example|email|yclid/);
+  const next = rememberMarketingSource("https://shariku.ru/balloons/", stored, now + 1000);
+  const sourceHref = marketingSourceHref("https://shariku.ru/balloons/", next);
+  const contact = appendMarketingSource("https://wa.me/79243370123?text=Здравствуйте", sourceHref);
+  assert.match(new URL(contact).searchParams.get("text"), /Яндекс\.Директ · кампания search · объявление balloons/);
+});
+
+test("does not credit organic visits to expired campaigns or merge a new campaign with the old one", () => {
+  const now = 100000;
+  const stored = rememberMarketingSource("https://shariku.ru/?utm_source=yandex&utm_campaign=old&utm_content=old_ad", null, now);
+  assert.equal(rememberMarketingSource("https://shariku.ru/", stored, now + 1800001), null);
+  assert.equal(rememberMarketingSource("https://shariku.ru/", "broken json", now), null);
+  const next = rememberMarketingSource("https://shariku.ru/?utm_source=telegram&utm_campaign=new", stored, now + 1000);
+  const href = marketingSourceHref("https://shariku.ru/flowers/", next);
+  assert.equal(new URL(href).searchParams.get("utm_source"), "telegram");
+  assert.equal(new URL(href).searchParams.get("utm_campaign"), "new");
+  assert.equal(new URL(href).searchParams.has("utm_content"), false);
 });
 
 test("makes the mobile header call action a real phone link", async () => {
@@ -195,6 +218,8 @@ test("keeps all five public pages indexable with one self-canonical", async () =
     assert.equal(canonicalTags[0][1], `https://shariku.ru/${path}`);
     assert.ok(robotsTags.every(([, value]) => !/noindex|nofollow/i.test(value)), path);
     assert.match(html, /<h1\b/, path);
+    assert.ok(html.includes('href="https://yandex.ru/maps/org/103639380260/"'), path);
+    assert.match(html, /"hasMap":"https:\/\/yandex\.ru\/maps\/org\/103639380260\/"/, path);
     titles.add(titleTags[0][1]);
     descriptions.add(descriptionTags[0][1]);
   }

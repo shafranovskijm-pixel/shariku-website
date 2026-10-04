@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { YANDEX_MAPS_URL } from "./business-location";
 
 export type CategoryOffer = {
   title: string;
@@ -242,7 +243,7 @@ export default function CategoryLanding({ data }: { data: CategoryLandingData })
           </Link>
           <p>Создаём атмосферу вашего праздника в Приморском крае</p>
           <div className="footer-details">
-            <span>Садовая, 3г</span>
+            <a href={YANDEX_MAPS_URL} target="_blank" rel="noopener noreferrer">Садовая, 3г · Открыть в Яндекс Картах ↗</a>
             <span>Пн–Сб 10:00–19:00 · Вс 10:00–18:00</span>
             <span>Екатерина {contacts[0].phoneDisplay} · Наталья {contacts[1].phoneDisplay}</span>
           </div>

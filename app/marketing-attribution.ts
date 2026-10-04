@@ -1,4 +1,57 @@
 const MAX_LABEL_LENGTH = 64;
+export const MARKETING_SOURCE_KEY = "shariku.marketing-source.v1";
+const SOURCE_TTL_MS = 30 * 60 * 1000;
+
+// Retain only the human-readable campaign labels. Never store the click ID or
+// arbitrary URL parameters in the WhatsApp attribution record.
+export function rememberMarketingSource(
+  landingHref: string,
+  stored: string | null,
+  now = Date.now(),
+) {
+  const landing = new URL(landingHref);
+  const labels = new URLSearchParams();
+  const source = landing.searchParams.has("yclid")
+    ? "yandex"
+    : cleanLabel(landing.searchParams.get("utm_source"));
+
+  if (source) {
+    labels.set("utm_source", source);
+    for (const key of ["utm_campaign", "utm_content"]) {
+      const value = cleanLabel(landing.searchParams.get(key));
+      if (value) labels.set(key, value);
+    }
+    return JSON.stringify({ labels: labels.toString(), expiresAt: now + SOURCE_TTL_MS });
+  }
+
+  try {
+    const previous = JSON.parse(stored ?? "null");
+    if (typeof previous?.labels === "string" && previous.labels.length <= 2048 &&
+        Number.isFinite(previous.expiresAt) && previous.expiresAt > now &&
+        previous.expiresAt <= now + SOURCE_TTL_MS) {
+      const previousLabels = new URLSearchParams(previous.labels);
+      for (const key of ["utm_source", "utm_campaign", "utm_content"]) {
+        const value = cleanLabel(previousLabels.get(key));
+        if (value) labels.set(key, value);
+      }
+      if (labels.has("utm_source")) {
+        return JSON.stringify({ labels: labels.toString(), expiresAt: now + SOURCE_TTL_MS });
+      }
+    }
+  } catch { /* Expired or malformed storage must not affect the order link. */ }
+  return null;
+}
+
+export function marketingSourceHref(landingHref: string, stored: string | null) {
+  const landing = new URL(landingHref);
+  try {
+    const source = JSON.parse(stored ?? "null");
+    if (typeof source?.labels === "string") {
+      landing.search = source.labels;
+    }
+  } catch { /* Use the current URL when storage is unavailable. */ }
+  return landing.href;
+}
 
 function cleanLabel(value: string | null) {
   return value

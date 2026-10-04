@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import MessengerAttribution from "./MessengerAttribution";
 import Metrika from "./Metrika";
+import { YANDEX_MAPS_URL } from "./business-location";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://shariku.ru"),
@@ -111,7 +112,8 @@ export default function RootLayout({
                 },
               ],
               areaServed: ["Уссурийск", "Приморский край"],
-              sameAs: [],
+              hasMap: YANDEX_MAPS_URL,
+              sameAs: [YANDEX_MAPS_URL],
             }),
           }}
         />

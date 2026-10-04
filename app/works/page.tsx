@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { YANDEX_MAPS_URL } from "../business-location";
 
 export const metadata: Metadata = {
   title: "Наши работы — фотозоны и оформление праздников в Уссурийске",
@@ -128,7 +129,7 @@ export default function WorksPage() {
           </Link>
           <p>Создаём атмосферу вашего праздника в Приморском крае</p>
           <div className="footer-details">
-            <span>Садовая, 3г</span>
+            <a href={YANDEX_MAPS_URL} target="_blank" rel="noopener noreferrer">Садовая, 3г · Открыть в Яндекс Картах ↗</a>
             <span>Пн–Сб 10:00–19:00 · Вс 10:00–18:00</span>
             <span>Екатерина +7 924 337-01-23 · Наталья +7 924 336-30-07</span>
           </div>

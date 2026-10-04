@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 const COUNTER_ID = 111239502;
 
@@ -13,10 +14,12 @@ declare global {
   interface Window {
     ym?: MetrikaFunction;
     __sharikuMetrikaInitialized?: boolean;
+    __sharikuLastPageView?: string;
   }
 }
 
 export default function Metrika() {
+  const pathname = usePathname();
   useEffect(() => {
     if (!window.ym) {
       const ym: MetrikaFunction = (...args: unknown[]) => {
@@ -36,6 +39,7 @@ export default function Metrika() {
     if (!window.__sharikuMetrikaInitialized) {
       window.ym?.(COUNTER_ID, "init", {
         ssr: true,
+        defer: true,
         webvisor: true,
         clickmap: true,
         accurateTrackBounce: true,
@@ -44,8 +48,16 @@ export default function Metrika() {
       window.__sharikuMetrikaInitialized = true;
     }
 
-    if (window.location.pathname.startsWith("/works")) {
-      window.ym?.(COUNTER_ID, "reachGoal", "works_view");
+    const pageUrl = window.location.href;
+    if (window.__sharikuLastPageView !== pageUrl) {
+      window.ym?.(COUNTER_ID, "hit", pageUrl, {
+        title: document.title,
+        referer: window.__sharikuLastPageView ?? document.referrer,
+      });
+      window.__sharikuLastPageView = pageUrl;
+      if (pathname === "/works" || pathname === "/works/") {
+        window.ym?.(COUNTER_ID, "reachGoal", "works_view");
+      }
     }
 
     const trackContactClick = (event: MouseEvent) => {
@@ -71,7 +83,7 @@ export default function Metrika() {
 
     document.addEventListener("click", trackContactClick);
     return () => document.removeEventListener("click", trackContactClick);
-  }, []);
+  }, [pathname]);
 
   return null;
 }
