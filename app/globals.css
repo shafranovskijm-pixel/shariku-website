@@ -102,6 +102,162 @@ nav a:hover,
   justify-self: end;
 }
 
+.carnation-offer {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #edd9dd;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(99, 43, 66, 0.06);
+  display: grid;
+  gap: clamp(20px, 3vw, 44px);
+  grid-template-columns: minmax(240px, 34%) minmax(0, 1fr) auto;
+  margin: 22px clamp(22px, 4vw, 72px) 0;
+  overflow: hidden;
+  padding-right: clamp(22px, 3vw, 44px);
+}
+
+.carnation-offer-image {
+  background: #fbf7f2;
+  height: 240px;
+  margin: 0;
+  position: relative;
+}
+
+.carnation-offer-image img {
+  object-fit: contain;
+}
+
+.carnation-availability {
+  align-items: center;
+  color: #32633c;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 7px;
+}
+
+.carnation-availability i {
+  background: #528d57;
+  border-radius: 50%;
+  height: 7px;
+  width: 7px;
+}
+
+.carnation-offer-copy h2 {
+  font-size: clamp(38px, 4vw, 58px);
+  line-height: 1.1;
+  margin: 10px 0 12px;
+}
+
+.carnation-offer-copy p {
+  color: #66585f;
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.carnation-offer-order {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.carnation-offer-price {
+  color: var(--pink-dark);
+  font-size: clamp(42px, 4.5vw, 62px);
+  letter-spacing: -0.05em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.carnation-offer-order .button {
+  white-space: nowrap;
+}
+
+@media (min-width: 701px) and (max-width: 1000px) {
+  .carnation-offer {
+    gap: 18px 24px;
+    grid-template-columns: minmax(220px, 42%) minmax(0, 1fr);
+    padding-right: 24px;
+  }
+
+  .carnation-offer-image {
+    grid-row: span 2;
+    height: 260px;
+  }
+
+  .carnation-offer-copy {
+    align-self: end;
+    padding-top: 22px;
+  }
+
+  .carnation-offer-order {
+    align-self: start;
+    gap: 12px;
+    padding-bottom: 22px;
+  }
+
+  .carnation-offer-copy h2 {
+    font-size: 38px;
+    margin: 7px 0;
+  }
+
+  .carnation-offer-price {
+    font-size: 38px;
+  }
+
+  .carnation-offer-order .button {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 700px) {
+  .carnation-offer {
+    gap: 0;
+    grid-template-columns: 1fr;
+    margin: 18px 18px 0;
+    padding: 0;
+  }
+
+  .carnation-offer-image {
+    height: 180px;
+  }
+
+  .carnation-offer-copy {
+    padding: 18px 20px 12px;
+  }
+
+  .carnation-offer-copy h2 {
+    font-size: 38px;
+    margin: 6px 0;
+  }
+
+  .carnation-offer-copy p {
+    font-size: 14px;
+  }
+
+  .carnation-offer-order {
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px 18px;
+    justify-content: space-between;
+    padding: 0 20px 20px;
+  }
+
+  .carnation-offer-price {
+    font-size: 42px;
+  }
+
+  .carnation-offer-order .button {
+    font-size: 12px;
+    gap: 8px;
+    min-height: 46px;
+    padding: 0 16px;
+  }
+}
+
 .hero {
   display: grid;
   gap: 72px;

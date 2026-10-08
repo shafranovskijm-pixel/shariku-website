@@ -182,7 +182,8 @@ test("renders focused category landings with canonical metadata and precise CTA 
     assert.match(html, /property="og:site_name" content="Студия оформления «Шарик»"/);
     assert.doesNotMatch(html, /Студия «Шарик» \| Студия «Шарик»/i);
 
-    const href = html.match(/href="(https:\/\/wa\.me\/[^"]+)"/)?.[1];
+    const categoryActions = html.match(/<div class="category-actions">([\s\S]*?)<\/div>/)?.[1] ?? "";
+    const href = categoryActions.match(/href="(https:\/\/wa\.me\/[^"]+)"/)?.[1];
     assert.ok(href, item.file);
     const message = new URL(href.replaceAll("&amp;", "&")).searchParams.get("text") ?? "";
     assert.match(message, /Пишу с сайта shariku\.ru/);

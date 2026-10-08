@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import CarnationOffer from "./CarnationOffer";
 import SeasonalFlowerTitle from "./SeasonalFlowerTitle";
 import { YANDEX_MAPS_URL } from "./business-location";
 
@@ -93,6 +94,8 @@ export default function Home() {
           Позвонить Екатерине
         </a>
       </header>
+
+      <CarnationOffer />
 
       <section className="hero" id="top">
         <div className="hero-copy">

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import CarnationOffer from "./CarnationOffer";
 import { YANDEX_MAPS_URL } from "./business-location";
 
 export type CategoryOffer = {
@@ -116,6 +117,8 @@ export default function CategoryLanding({ data }: { data: CategoryLandingData })
           Позвонить Екатерине
         </a>
       </header>
+
+      {data.slug === "flowers" && <CarnationOffer />}
 
       <nav className="category-breadcrumb" aria-label="Хлебные крошки">
         <Link href="/">Главная</Link>
