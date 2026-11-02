@@ -4,6 +4,11 @@ export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
+    ...["privacy", "requisites", "ordering", "analytics-consent"].map((path) => ({
+      url: `https://shariku.ru/${path}/`,
+      changeFrequency: "yearly" as const,
+      priority: 0.2,
+    })),
     {
       url: "https://shariku.ru/",
       changeFrequency: "weekly",

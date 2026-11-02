@@ -1,0 +1,15 @@
+.catalog{padding:76px max(24px,calc((100vw - 1240px)/2));background:#fff9fb;scroll-margin-top:100px}
+.heading{display:flex;align-items:flex-end;justify-content:space-between;gap:40px;margin-bottom:32px}
+.heading h2{font-size:clamp(30px,3.4vw,46px);line-height:1.12;margin:8px 0 0;letter-spacing:-1.5px}
+.heading>p{max-width:440px;line-height:1.7;color:#746c73}
+.content{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:44px;align-items:start}
+.poster{margin:0}.poster img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid #efdee6}
+.poster figcaption{padding-top:12px;color:#826977;font-size:13px;text-align:center}
+.prices table{width:100%;border-collapse:collapse;text-align:left;font-size:15px}
+.prices caption{text-align:left;font-weight:700;font-size:21px;margin:0 0 20px}
+.prices thead{color:#8c687c;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.prices th,.prices td{padding:13px 0;border-bottom:1px solid #ecdfe5}
+.prices tbody th{font-weight:500;padding-right:20px}.prices td{white-space:nowrap;text-align:right;font-weight:700;color:#b24a7b}
+.prices thead th:last-child{text-align:right}.note{font-size:13px;line-height:1.7;color:#746c73;margin:24px 0}.prices>a{margin-top:0}
+.rose{border-top:1px solid #ecdfe5;margin-top:30px;padding-top:20px;font-size:15px}.rose summary{cursor:pointer;font-weight:600}.rose img{display:block;max-width:360px;width:100%;height:auto;border-radius:16px;margin:24px auto 0}
+@media(max-width:760px){.catalog{padding:48px 20px}.heading{display:block}.heading>p{margin-top:18px}.content{grid-template-columns:1fr;gap:32px}.poster{max-width:560px;margin:auto}.prices{min-width:0}.prices th,.prices td{padding:12px 0}.heading h2{letter-spacing:-1px}}

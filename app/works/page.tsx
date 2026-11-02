@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import WorksGallery from "../WorksGallery";
+import VideoShowcase from "../VideoShowcase";
+import { recentWorks } from "../recent-works";
 import { YANDEX_MAPS_URL } from "../business-location";
 
 export const metadata: Metadata = {
@@ -63,8 +66,6 @@ const works = [
   { src: "/images/works/work-135.jpeg", alt: "Оформление сцены на школьный выпускной", category: "Выпускные" },
 ];
 
-const categories = [...new Set(works.map((work) => work.category))];
-
 export default function WorksPage() {
   return (
     <main className="works-page">
@@ -98,18 +99,10 @@ export default function WorksPage() {
       </section>
 
       <section className="works-content">
-        <div className="works-categories" aria-label="Категории работ">
-          {categories.map((category) => <span key={category}>{category}</span>)}
-        </div>
-        <div className="works-grid">
-          {works.map((work) => (
-            <figure key={work.src}>
-              <img src={work.src} alt={work.alt} loading="lazy" />
-              <figcaption>{work.category}</figcaption>
-            </figure>
-          ))}
-        </div>
+        <WorksGallery works={[...recentWorks, ...works]} />
       </section>
+
+      <VideoShowcase />
 
       <section className="works-cta">
         <div>

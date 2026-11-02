@@ -28,7 +28,7 @@ const getFlowerWhatsappLink = (title: string) =>
     `${sourceIntro} Хочу заказать цветы. Подскажите, пожалуйста, состав и стоимость букета «${title}».`,
   )}`;
 const telegramLink =
-  `https://t.me/+${contacts[0].phone}?text=${encodeURIComponent(orderMessage)}&profile`;
+  `https://t.me/ea_baitimirova?text=${encodeURIComponent(orderMessage)}`;
 
 const services = [
   { title: "Воздушные шары", price: "от 150 ₽", note: "Латексные, фольгированные, с надписями", image: "/images/works/work-090.jpeg", alt: "Голубая персональная композиция из воздушных шаров на первый день рождения" },

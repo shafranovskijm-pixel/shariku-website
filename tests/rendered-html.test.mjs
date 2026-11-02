@@ -1,13 +1,24 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
 import { appendMarketingSource, marketingSourceHref, rememberMarketingSource } from "../app/marketing-attribution.ts";
+import { recentWorks } from "../app/recent-works.ts";
 
 const root = new URL("../", import.meta.url);
 
 async function read(relativePath) {
   return readFile(new URL(relativePath, root), "utf8");
+}
+
+async function portfolioWorks() {
+  const source = await read("app/works/page.tsx");
+  const legacyList = source.match(/const works\s*=\s*\[([\s\S]*?)\n\];/)?.[1];
+  assert.ok(legacyList, "The existing portfolio list must remain available");
+  const legacyWorks = [...legacyList.matchAll(/\{\s*src:\s*"([^"]+)",\s*alt:\s*"([^"]+)",\s*category:\s*"([^"]+)"\s*\}/g)]
+    .map(([, src, alt, category]) => ({ src, alt, category }));
+  assert.equal(legacyWorks.length, 32, "Retain all 32 existing portfolio entries");
+  return [...recentWorks, ...legacyWorks];
 }
 
 test("publishes the flower launch on the main page", async () => {
@@ -17,7 +28,7 @@ test("publishes the flower launch on the main page", async () => {
   assert.doesNotMatch(html, /К 1 сентября — свежие цветы уже в «Шарике»/);
   assert.match(html, /Подобрать букет/);
   assert.match(html, /flower_order_click/);
-  assert.match(html, /111239502/);
+  assert.doesNotMatch(html, /mc\.yandex\.ru\/watch|<script[^>]+src=["']https:\/\/mc\.yandex/);
   assert.match(html, /Цветы и воздушные шары в Уссурийске/);
   assert.doesNotMatch(html, /href="\/works"/);
 
@@ -201,6 +212,68 @@ test("gives the portfolio its own social metadata and category links", async () 
   assert.match(html, /href="\/event-decoration\/"/);
 });
 
+test("portfolio assets have unique local sources, descriptive labels and nonempty files", async () => {
+  const works = await portfolioWorks();
+  assert.ok(recentWorks.length >= 60, "Retain all sixty newly supplied portfolio photographs");
+  assert.equal(new Set(works.map((work) => work.src)).size, works.length, "A photo source must appear only once");
+  await Promise.all(works.map(async (work) => {
+    assert.match(work.src, /^\/images\/(?:recent|works)\/[^/?#]+\.(?:jpe?g|png|webp)$/i);
+    assert.ok(work.alt.trim().length > 0, `${work.src}: descriptive alt text`);
+    assert.ok(work.category.trim().length > 0, `${work.src}: category`);
+    const asset = await stat(new URL(`public${work.src}`, root));
+    assert.ok(asset.isFile() && asset.size > 0, work.src);
+  }));
+});
+
+test("renders fifteen portfolio photos, all category filters and an accessible show-more action", async () => {
+  const works = await portfolioWorks();
+  const html = (await read("out/works/index.html")).replace(/<!--[\s\S]*?-->/g, "");
+  const gallery = html.match(/<div class="works-grid">([\s\S]*?)<\/div>/)?.[1];
+  assert.ok(gallery, "Portfolio must show photographs in the initial HTML");
+  const images = [...gallery.matchAll(/<img\b[^>]*src="([^"]+)"/g)].map(([, src]) => src);
+  assert.equal(images.length, 15, "Initial gallery is limited to fifteen images");
+  assert.equal([...gallery.matchAll(/<figure\b/g)].length, 15);
+  assert.deepEqual(images, works.slice(0, 15).map((work) => work.src));
+
+  const filters = html.match(/<div[^>]*aria-label="Категории работ"[^>]*>([\s\S]*?)<\/div>/)?.[1];
+  assert.ok(filters, "Portfolio categories must be usable buttons");
+  const buttons = [...filters.matchAll(/<button\b([^>]*)>([^<]+)<\/button>/g)];
+  const labels = buttons.map(([, , label]) => label);
+  assert.deepEqual(labels, ["Все работы", ...new Set(works.map((work) => work.category))]);
+  assert.equal(new Set(labels).size, labels.length);
+  assert.ok(labels.every((label) => label.trim().length > 0));
+  assert.equal(buttons.filter(([, attributes]) => attributes.includes('aria-pressed="true"')).length, 1);
+  assert.match(buttons[0][1], /aria-pressed="true"/);
+  assert.match(html, new RegExp(`aria-live="polite"[^>]*>Все работы · ${works.length} фото<`));
+  assert.match(html, /<button\b[^>]*type="button"[^>]*>Показать ещё фото\s*<span>↓<\/span><\/button>/);
+});
+
+test("provides playable portfolio videos with existing sources, posters and no autoplay", async () => {
+  const html = await read("out/works/index.html");
+  const videos = [...html.matchAll(/<video\b([^>]*)>([\s\S]*?)<\/video>/g)];
+  assert.ok(videos.length >= 2, "Both supplied video examples must be available");
+  const sources = [];
+  await Promise.all(videos.map(async ([, attributes, content]) => {
+    assert.match(attributes, /\bcontrols(?:="")?(?:\s|$)/);
+    assert.match(attributes, /\bpreload="none"/);
+    assert.doesNotMatch(attributes, /\bautoplay/i);
+    assert.match(attributes, /\baria-label="[^"]+"/);
+    const poster = attributes.match(/\bposter="([^"]+)"/)?.[1];
+    const src = content.match(/<source\b[^>]*src="([^"]+)"[^>]*type="video\/mp4"/)?.[1];
+    assert.ok(poster, "Each video needs a poster");
+    assert.ok(src, "Each video needs an MP4 source");
+    sources.push(src);
+    assert.match(src, /^\/videos\/recent\/[^/?#]+\.mp4$/);
+    assert.match(poster, /^\/images\/recent\/[^/?#]+\.(?:jpe?g|png|webp)$/i);
+    assert.ok(content.includes(`href="${src}"`), "Provide a direct-video fallback link");
+    for (const path of [src, poster]) {
+      const asset = await stat(new URL(`public${path}`, root));
+      assert.ok(asset.isFile() && asset.size > 0, path);
+    }
+  }));
+  assert.equal(new Set(sources).size, sources.length, "Avoid duplicate video entries");
+});
+
 test("keeps all five public pages indexable with one self-canonical", async () => {
   const paths = ["", "works/", "flowers/", "balloons/", "event-decoration/"];
   const titles = new Set();
@@ -242,5 +315,77 @@ test("exports a useful Russian 404 without home metadata or index directive", as
   assert.doesNotMatch(html, /This page could not be found/);
   for (const path of ["/", "/flowers/", "/balloons/", "/event-decoration/", "/works/"]) {
     assert.ok(html.includes(`href="${path}"`), path);
+  }
+});
+
+test("publishes all eleven supplied flower prices with the correct names", async () => {
+  const html = (await read("out/flowers/index.html")).replace(/<!--[\s\S]*?-->/g, "");
+  const table = html.match(/<table[^>]*>([\s\S]*?<caption>Прайс на цветы и зелень<\/caption>[\s\S]*?)<\/table>/)?.[1];
+  assert.ok(table, "The flower price list must be readable HTML, not only an image");
+  const rows = [...table.matchAll(/<tr[^>]*>\s*<th scope="row">([^<]+)<\/th>\s*<td>(\d+)\s*₽<\/td>\s*<\/tr>/g)]
+    .map(([, name, price]) => [name, Number(price)]);
+  assert.deepEqual(rows, [
+    ["Хризантема Алтай", 350],
+    ["Роза белая Candlelight (Эквадор)", 350],
+    ["Гвоздика", 85],
+    ["Альстромерия белая", 250],
+    ["Роза красная Explorer (Эквадор)", 300],
+    ["Роза EC Full Monty", 300],
+    ["Роза EC Nina", 300],
+    ["Роза Red Panthera", 300],
+    ["Лилия", 500],
+    ["Зелень на выбор", 100],
+    ["Гипсофила", 150],
+  ]);
+  assert.match(html, /href="\/images\/flowers\/catalog-2026\.png"/);
+  assert.match(html, /src="\/images\/flowers\/red-panthera\.png"/);
+});
+
+test("exports legal documents with the proprietor's verified details and working navigation", async () => {
+  const cases = [
+    ["privacy/", "Политика конфиденциальности"],
+    ["analytics-consent/", "Согласие на обработку данных для аналитики"],
+    ["requisites/", "Сведения и контакты"],
+    ["ordering/", "Заказ, доставка и оплата"],
+  ];
+  const sitemap = await read("out/sitemap.xml");
+  for (const [path, heading] of cases) {
+    const html = await read(`out/${path}index.html`);
+    const h1 = html.match(/<h1[^>]*>([^<]+)<\/h1>/)?.[1];
+    assert.equal(h1, heading, path);
+    assert.ok(html.includes(`rel="canonical" href="https://shariku.ru/${path}"`), path);
+    for (const detail of ["Байтимирова Екатерина Алексеевна", "252000193603", "326253600056261"]) {
+      assert.ok(html.includes(detail), `${path}: ${detail}`);
+    }
+    assert.match(html, /href="mailto:katti_silence@mail\.ru"/);
+    assert.match(html, /aria-label="Документы и условия"/);
+    assert.match(html, /<button[^>]*>Настройки аналитики<\/button>/);
+    for (const [legalPath] of cases) {
+      assert.ok(html.includes(`href="/${legalPath}"`), `${path}: ${legalPath}`);
+    }
+    assert.ok(sitemap.includes(`https://shariku.ru/${path}`), path);
+  }
+});
+
+test("does not embed a tracking pixel or third-party analytics script before consent", async () => {
+  for (const path of ["", "flowers/", "balloons/", "event-decoration/", "works/", "privacy/", "analytics-consent/", "requisites/", "ordering/"]) {
+    const html = await read(`out/${path}index.html`);
+    assert.doesNotMatch(html, /mc\.yandex\.ru\/watch|<script[^>]+src=["']https:\/\/mc\.yandex/, path);
+  }
+});
+
+test("keeps public business schema accurate and excludes private source URLs", async () => {
+  for (const path of ["", "flowers/", "balloons/", "event-decoration/", "works/"]) {
+    const html = await read(`out/${path}index.html`);
+    const schemas = [...html.matchAll(/<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)]
+      .map(([, content]) => JSON.parse(content));
+    const business = schemas.find((schema) => schema["@type"] === "LocalBusiness");
+    assert.ok(business, path);
+    assert.equal(business.url, "https://shariku.ru/");
+    assert.equal(business.address.streetAddress, "Садовая улица, 3г");
+    assert.equal(business.address.addressLocality, "Уссурийск");
+    assert.deepEqual(business.telephone, ["+7 924 337-01-23", "+7 924 336-30-07"]);
+    for (const asset of business.image) assert.equal(new URL(asset).origin, "https://shariku.ru");
+    assert.doesNotMatch(JSON.stringify(schemas), /web\.telegram\.org|5550254442|localhost|127\.0\.0\.1|api\.timeweb\.cloud|file:\/\/|[A-Z]:\\\\/i, path);
   }
 });

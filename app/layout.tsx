@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import MessengerAttribution from "./MessengerAttribution";
-import Metrika from "./Metrika";
+import LegalFooter from "./LegalFooter";
+import AnalyticsConsent from "./AnalyticsConsent";
 import { YANDEX_MAPS_URL } from "./business-location";
 
 export const metadata: Metadata = {
@@ -60,17 +60,7 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
-        <Metrika />
-        <MessengerAttribution />
-        <noscript>
-          <div>
-            <img
-              src="https://mc.yandex.ru/watch/111239502"
-              style={{ position: "absolute", left: "-9999px" }}
-              alt=""
-            />
-          </div>
-        </noscript>
+        <AnalyticsConsent />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -79,6 +69,9 @@ export default function RootLayout({
               "@type": "LocalBusiness",
               "@id": "https://shariku.ru/#business",
               name: "Шарик — цветы, воздушные шары и студия оформления",
+              legalName: "ИП Байтимирова Екатерина Алексеевна",
+              taxID: "252000193603",
+              email: "katti_silence@mail.ru",
               description: "Свежие цветы, букеты, воздушные шары, фотозоны, пресс-воллы и оформление праздников в Уссурийске.",
               url: "https://shariku.ru/",
               telephone: ["+7 924 337-01-23", "+7 924 336-30-07"],
@@ -118,6 +111,7 @@ export default function RootLayout({
           }}
         />
         {children}
+        <LegalFooter />
       </body>
     </html>
   );

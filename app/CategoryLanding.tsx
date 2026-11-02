@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import CarnationOffer from "./CarnationOffer";
+import FlowerCatalog from "./FlowerCatalog";
 import { YANDEX_MAPS_URL } from "./business-location";
 
 export type CategoryOffer = {
@@ -159,6 +160,8 @@ export default function CategoryLanding({ data }: { data: CategoryLandingData })
           />
         </figure>
       </section>
+
+      {data.slug === "flowers" && <FlowerCatalog />}
 
       <section className="category-offers section">
         <div className="section-heading">
