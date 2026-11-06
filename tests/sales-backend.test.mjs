@@ -190,6 +190,18 @@ test("test order cannot enter feed even when paid; missing analytics or ClientID
   assert.equal(conversionFeed(f.store, env, NOW).csv.split("\r\n").length, 2); f.db.close();
 });
 
+test("export expires at111 days independently of120-day business storage", () => {
+  const f = fixture();
+  const included = normalizeOrder(payload()); const excluded = normalizeOrder(payload());
+  f.store.createOrder(included, "included", NOW - 111 * 86400);
+  f.store.createOrder(excluded, "excluded", NOW - 111 * 86400 - 1);
+  f.store.delivery(included.requestId, "delivered", 1); f.store.delivery(excluded.requestId, "delivered", 2);
+  f.store.pay(excluded.requestId, 10000, MANAGER, NOW);
+  assert.deepEqual(f.store.ordersForExport(NOW).map(row => row.request_id), [included.requestId]);
+  f.store.purge(NOW);
+  assert.ok(f.store.order(included.requestId)); assert.ok(f.store.order(excluded.requestId)); f.db.close();
+});
+
 test("test flag without separate server secret is forbidden", async () => {
   const f = fixture(); assert.equal((await f.service.acceptOrder(orderRequest(payload({ isTest: true })), "ip")).status, 403); assert.equal(f.calls.length, 0); f.db.close();
 });
