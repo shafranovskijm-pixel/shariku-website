@@ -1,8 +1,5 @@
 import Image from "next/image";
-
-const orderLink = `https://wa.me/79243370123?text=${encodeURIComponent(
-  "Здравствуйте! Пишу с сайта shariku.ru. Хочу заказать гвоздики по 85 ₽. Подскажите, пожалуйста, ближайшее время получения.",
-)}`;
+import { orderLink } from "./order-link";
 
 export default function CarnationOffer() {
   return (
@@ -23,8 +20,8 @@ export default function CarnationOffer() {
       </div>
       <div className="carnation-offer-order">
         <strong className="carnation-offer-price">85 ₽</strong>
-        <a className="button button-primary" href={orderLink} data-ym-goal="flower_order_click">
-          Заказать в WhatsApp <span aria-hidden="true">↗</span>
+        <a className="button button-primary" href={orderLink("flowers", "гвоздики по 85 ₽")}>
+          Оставить заявку <span aria-hidden="true">→</span>
         </a>
       </div>
     </section>

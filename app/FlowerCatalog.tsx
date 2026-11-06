@@ -1,4 +1,5 @@
 import styles from "./FlowerCatalog.module.css";
+import { orderLink } from "./order-link";
 
 export const flowerCatalog = [
   { name: "Хризантема Алтай", price: 350 },
@@ -35,7 +36,7 @@ export default function FlowerCatalog() {
             <tbody>{flowerCatalog.map(item => <tr key={item.name}><th scope="row">{item.name}</th><td>{item.price} ₽</td></tr>)}</tbody>
           </table>
           <p className={styles.note}>Стоимость букета зависит от количества цветов и оформления. Доставку рассчитываем отдельно. Уточните наличие и цену выбранной позиции у флориста.</p>
-          <a className="button button-primary" href={`https://wa.me/79243370123?text=${encodeURIComponent("Здравствуйте! Пишу с сайта shariku.ru. Хочу собрать букет из цветов в каталоге. Подскажите наличие и итоговую стоимость.")}`} data-ym-goal="flower_order_click">Собрать свой букет <span>↗</span></a>
+          <a className="button button-primary" href={orderLink("flowers", "букет из цветов в каталоге")}>Собрать свой букет <span>→</span></a>
         </div>
       </div>
       <details className={styles.rose}>

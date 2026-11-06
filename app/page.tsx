@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import CarnationOffer from "./CarnationOffer";
 import SeasonalFlowerTitle from "./SeasonalFlowerTitle";
 import { YANDEX_MAPS_URL } from "./business-location";
+import { orderLink } from "./order-link";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -23,10 +24,6 @@ const getWhatsappLink = (phone: string, subject?: string) =>
     subject ? getWhatsappMessage(subject) : orderMessage,
   )}`;
 const primaryWhatsappLink = getWhatsappLink(contacts[0].phone);
-const getFlowerWhatsappLink = (title: string) =>
-  `https://wa.me/${contacts[0].phone}?text=${encodeURIComponent(
-    `${sourceIntro} Хочу заказать цветы. Подскажите, пожалуйста, состав и стоимость букета «${title}».`,
-  )}`;
 const telegramLink =
   `https://t.me/ea_baitimirova?text=${encodeURIComponent(orderMessage)}`;
 
@@ -107,7 +104,8 @@ export default function Home() {
             под ваш повод и бюджет.
           </p>
           <div className="hero-actions">
-            <a className="button button-primary" href={primaryWhatsappLink}>Заказать в WhatsApp <span>↗</span></a>
+            <a className="button button-primary" href={orderLink()}>Оставить заявку <span>→</span></a>
+            <a className="button button-ghost" href={primaryWhatsappLink}>Написать в WhatsApp <span>↗</span></a>
             <a className="button button-ghost" href="#services">Посмотреть цены</a>
           </div>
           <div className="hero-facts">
@@ -146,12 +144,11 @@ export default function Home() {
             <p>
               Соберём букет к школе, празднику или просто без повода. Состав и
               итоговая стоимость зависят от наличия цветов и желаемого размера —
-              уточните актуальные варианты в WhatsApp.
+              уточним актуальные варианты по вашей заявке.
             </p>
             <a
               className="button button-primary"
-              data-ym-goal="flower_order_click"
-              href={getFlowerWhatsappLink("букет по вашему бюджету")}
+              href={orderLink("flowers", "букет по вашему бюджету")}
             >
               Подобрать букет <span>↗</span>
             </a>
@@ -168,8 +165,7 @@ export default function Home() {
                 <h3>{bouquet.title}</h3>
                 <p>Состав и размер подберём под ваш бюджет.</p>
                 <a
-                  data-ym-goal="flower_order_click"
-                  href={getFlowerWhatsappLink(bouquet.title)}
+                  href={orderLink("flowers", bouquet.title)}
                   aria-label={`Узнать состав и стоимость: ${bouquet.title}`}
                 >
                   Узнать состав и стоимость <span>↗</span>
@@ -200,7 +196,7 @@ export default function Home() {
                 <p>{service.note}</p>
                 <div className="service-meta">
                   <strong>{service.price}</strong>
-                  <a href={getWhatsappLink(contacts[0].phone, service.title)} aria-label={`Узнать стоимость: ${service.title}`}>Уточнить <span>↗</span></a>
+                  <a href={orderLink(index < 4 || index === 5 || index === 6 || index === 7 || index === 8 ? "balloons" : "decoration", service.title)} aria-label={`Узнать стоимость: ${service.title}`}>Уточнить <span>→</span></a>
                 </div>
               </div>
             </article>
@@ -214,7 +210,7 @@ export default function Home() {
             <p className="eyebrow">Наши работы</p>
             <h2>Идеи, которые становятся атмосферой</h2>
           </div>
-          <a className="text-link" href={getWhatsappLink(contacts[0].phone, "оформление, похожее на работу из портфолио")}>Хочу похожее <span>↗</span></a>
+          <a className="text-link" href={orderLink("decoration", "оформление, похожее на работу из портфолио")}>Хочу похожее <span>→</span></a>
         </div>
         <div className="gallery-grid">
           {gallery.map((image) => (

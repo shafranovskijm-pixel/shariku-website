@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Metrika, { stopMetrika } from "./Metrika";
 import MessengerAttribution, { clearMarketingAttribution } from "./MessengerAttribution";
+import OrderAttribution, { clearOrderAttribution } from "./OrderAttribution";
 import {
   ANALYTICS_CONSENT_KEY,
   createAnalyticsConsent,
@@ -23,6 +24,7 @@ function stopAnalytics() {
   // Stop synchronously, before React renders the changed choice or a reload.
   stopMetrika();
   clearMarketingAttribution();
+  clearOrderAttribution();
 }
 
 export default function AnalyticsConsent() {
@@ -114,6 +116,7 @@ export default function AnalyticsConsent() {
     <>
       <Metrika enabled={enabled} />
       <MessengerAttribution enabled={enabled} />
+      <OrderAttribution enabled={enabled} />
       {ready && open && (
         <section className={styles.panel} aria-labelledby="analytics-consent-title">
           <div className={styles.heading}>
@@ -123,7 +126,7 @@ export default function AnalyticsConsent() {
                 onClick={() => { setOpen(false); returnFocus.current?.focus(); }}>×</button>
             )}
           </div>
-          <p>С вашего согласия используем Яндекс Метрику для статистики посещений, оценки рекламы и нажатий на кнопки связи. Сервис использует cookie и получает технические данные о посещении. Запись действий в Вебвизоре отключена.</p>
+          <p>С вашего согласия используем Яндекс Метрику для статистики посещений, оценки рекламы и связи оплаченных заказов с рекламными переходами. Сервис использует cookie и получает технические данные о посещении. Запись действий в Вебвизоре отключена.</p>
           <p>Нажимая «Разрешить аналитику», вы даёте <a href="/analytics-consent/">отдельное согласие на обработку данных для аналитики</a>. Выбор действует 180 дней. Изменить его можно внизу любой страницы.</p>
           {choice && <p className={styles.status}>Сейчас аналитика {enabled ? "включена" : "выключена"}.</p>}
           <div className={styles.actions}>

@@ -1,5 +1,5 @@
 export const ANALYTICS_CONSENT_KEY = "shariku.analytics-consent.v1";
-export const ANALYTICS_CONSENT_VERSION = "2026-11-02";
+export const ANALYTICS_CONSENT_VERSION = "2026-11-07";
 export const ANALYTICS_CONSENT_MAX_AGE = 180 * 24 * 60 * 60 * 1000;
 
 export type AnalyticsConsentRecord = {

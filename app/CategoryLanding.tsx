@@ -3,6 +3,7 @@ import Link from "next/link";
 import CarnationOffer from "./CarnationOffer";
 import FlowerCatalog from "./FlowerCatalog";
 import { YANDEX_MAPS_URL } from "./business-location";
+import { categoryOrderService, orderLink as requestLink } from "./order-link";
 
 export type CategoryOffer = {
   title: string;
@@ -44,6 +45,7 @@ function whatsappLink(subject: string) {
 
 export default function CategoryLanding({ data }: { data: CategoryLandingData }) {
   const orderLink = whatsappLink(data.ctaSubject);
+  const service = categoryOrderService(data.slug);
   const pageUrl = `https://shariku.ru/${data.slug}/`;
   const structuredData = {
     "@context": "https://schema.org",
@@ -133,8 +135,11 @@ export default function CategoryLanding({ data }: { data: CategoryLandingData })
           <h1>{data.title}</h1>
           <p>{data.lead}</p>
           <div className="category-actions">
+            <a className="button button-primary" href={requestLink(service, data.ctaSubject)}>
+              Оставить заявку <span>→</span>
+            </a>
             <a
-              className="button button-primary"
+              className="button button-ghost"
               href={orderLink}
               data-ym-goal={data.trackingGoal}
             >
@@ -187,7 +192,7 @@ export default function CategoryLanding({ data }: { data: CategoryLandingData })
                 <p>{offer.note}</p>
                 <div>
                   <strong>{offer.price}</strong>
-                  <a href={whatsappLink(offer.title)} data-ym-goal={data.trackingGoal}>
+                  <a href={requestLink(service, offer.title)}>
                     Уточнить <span>↗</span>
                   </a>
                 </div>
@@ -234,10 +239,9 @@ export default function CategoryLanding({ data }: { data: CategoryLandingData })
         </div>
         <a
           className="button button-primary"
-          href={orderLink}
-          data-ym-goal={data.trackingGoal}
+          href={requestLink(service, data.ctaSubject)}
         >
-          Написать в WhatsApp <span>↗</span>
+          Оставить заявку <span>→</span>
         </a>
       </section>
 

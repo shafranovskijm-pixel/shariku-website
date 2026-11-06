@@ -11,6 +11,15 @@ async function read(relativePath) {
   return readFile(new URL(relativePath, root), "utf8");
 }
 
+function visibleMarkup(html) {
+  return html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "").replace(/<!--[\s\S]*?-->/g, "");
+}
+
+function hrefs(html) {
+  return [...html.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g)]
+    .map(([, href]) => new URL(href.replaceAll("&amp;", "&"), "https://shariku.ru"));
+}
+
 async function portfolioWorks() {
   const source = await read("app/works/page.tsx");
   const legacyList = source.match(/const works\s*=\s*\[([\s\S]*?)\n\];/)?.[1];
@@ -27,7 +36,7 @@ test("publishes the flower launch on the main page", async () => {
   assert.match(html, /Свежие цветы теперь в «Шарике»/);
   assert.doesNotMatch(html, /К 1 сентября — свежие цветы уже в «Шарике»/);
   assert.match(html, /Подобрать букет/);
-  assert.match(html, /flower_order_click/);
+  assert.ok(hrefs(visibleMarkup(html)).some((url) => url.pathname === "/order/" && url.searchParams.get("service") === "flowers"));
   assert.doesNotMatch(html, /mc\.yandex\.ru\/watch|<script[^>]+src=["']https:\/\/mc\.yandex/);
   assert.match(html, /Цветы и воздушные шары в Уссурийске/);
   assert.doesNotMatch(html, /href="\/works"/);
@@ -40,33 +49,49 @@ test("publishes the flower launch on the main page", async () => {
   assert.equal(flowerImages.size, 9);
 });
 
-test("identifies Shariku and the requested service in WhatsApp messages", async () => {
-  const html = await read("out/index.html");
-  const messages = [...html.matchAll(/href="(https:\/\/wa\.me\/[^\"]+)"/g)].map(
-    ([, href]) =>
-      new URL(href.replaceAll("&amp;", "&")).searchParams.get("text") ?? "",
-  );
+test("keeps direct WhatsApp and Telegram contacts as secondary options with the site source", async () => {
+  const html = visibleMarkup(await read("out/index.html"));
+  const links = hrefs(html);
+  const messages = links.filter((url) => url.hostname === "wa.me").map((url) => url.searchParams.get("text") ?? "");
 
-  assert.ok(messages.length >= 20);
+  assert.ok(messages.length >= 2, "Both managers remain reachable through WhatsApp");
   assert.ok(messages.every((message) => message.includes("Пишу с сайта shariku.ru")));
+  for (const phone of ["79243370123", "79243363007"]) assert.ok(links.some((url) => url.hostname === "wa.me" && url.pathname === `/${phone}`), phone);
+  const telegram = links.find((url) => url.hostname === "t.me" && url.pathname === "/ea_baitimirova");
+  assert.ok(telegram);
+  assert.match(telegram.searchParams.get("text") ?? "", /Пишу с сайта shariku\.ru/);
+});
 
-  for (const subject of [
-    "Воздушные шары",
-    "Выпускные, школы и детские сады",
-    "Пресс-воллы и бренд-зоны",
-    "Фотозоны",
-    "Свадебное оформление",
-    "оформление, похожее на работу из портфолио",
-  ]) {
-    assert.ok(messages.some((message) => message.includes(subject)), subject);
+test("preserves every home service and bouquet as a contextual order enquiry", async () => {
+  const html = visibleMarkup(await read("out/index.html"));
+  const expectedServices = new Map([
+    ["Воздушные шары", "balloons"], ["Букеты из шаров", "balloons"],
+    ["Гендер-пати", "balloons"], ["День рождения", "balloons"],
+    ["Выпускные, школы и детские сады", "decoration"], ["Авто на выписку", "balloons"],
+    ["Выписка из роддома", "balloons"], ["Юбилей", "balloons"],
+    ["Арки и гирлянды", "balloons"], ["Корпоратив", "decoration"],
+    ["Пресс-воллы и бренд-зоны", "decoration"], ["Фотозоны", "decoration"],
+    ["Свадебное оформление", "decoration"], ["Свадебный президиум", "decoration"],
+  ]);
+  const cards = [...html.matchAll(/<article\b[^>]*class="service-card"[^>]*>([\s\S]*?)<\/article>/g)];
+  assert.equal(cards.length, expectedServices.size, "All fourteen service choices remain available");
+  for (const [, card] of cards) {
+    const title = card.match(/<h3>([^<]+)<\/h3>/)?.[1];
+    assert.ok(expectedServices.has(title), title);
+    const link = hrefs(card).find((url) => url.pathname === "/order/");
+    assert.ok(link, `${title}: order enquiry link`);
+    assert.equal(link.searchParams.get("service"), expectedServices.get(title), title);
+    assert.equal(link.searchParams.get("subject"), title, title);
   }
-
-  const telegramHref = html.match(/href="(https:\/\/t\.me\/[^\"]+)"/)?.[1];
-  assert.ok(telegramHref);
-  const telegramMessage = new URL(
-    telegramHref.replaceAll("&amp;", "&"),
-  ).searchParams.get("text");
-  assert.match(telegramMessage ?? "", /Пишу с сайта shariku\.ru/);
+  const bouquets = [...html.matchAll(/<article\b[^>]*class="flower-card"[^>]*>([\s\S]*?)<\/article>/g)];
+  assert.equal(bouquets.length, 9);
+  for (const [, card] of bouquets) {
+    const title = card.match(/<h3>([^<]+)<\/h3>/)?.[1];
+    const link = hrefs(card).find((url) => url.pathname === "/order/");
+    assert.ok(link, `${title}: flower enquiry link`);
+    assert.equal(link.searchParams.get("service"), "flowers");
+    assert.equal(link.searchParams.get("subject"), title);
+  }
 });
 
 test("identifies Shariku in the portfolio WhatsApp message", async () => {
@@ -167,18 +192,21 @@ test("renders focused category landings with canonical metadata and precise CTA 
       canonical: "https://shariku.ru/flowers/",
       heading: "Цветы и букеты в Уссурийске",
       subject: "букет по вашему бюджету",
+      service: "flowers",
     },
     {
       file: "out/balloons/index.html",
       canonical: "https://shariku.ru/balloons/",
       heading: "Воздушные шары в Уссурийске",
       subject: "воздушные шары — повод, дата и желаемый бюджет",
+      service: "balloons",
     },
     {
       file: "out/event-decoration/index.html",
       canonical: "https://shariku.ru/event-decoration/",
       heading: "Оформление праздников и фотозоны в Уссурийске",
       subject: "оформление праздника — повод, дата, площадка и бюджет",
+      service: "decoration",
     },
   ];
 
@@ -194,11 +222,26 @@ test("renders focused category landings with canonical metadata and precise CTA 
     assert.doesNotMatch(html, /Студия «Шарик» \| Студия «Шарик»/i);
 
     const categoryActions = html.match(/<div class="category-actions">([\s\S]*?)<\/div>/)?.[1] ?? "";
+    const request = hrefs(categoryActions).find((url) => url.pathname === "/order/");
+    assert.ok(request, item.file);
+    assert.equal(request.searchParams.get("service"), item.service);
+    assert.equal(request.searchParams.get("subject"), item.subject);
     const href = categoryActions.match(/href="(https:\/\/wa\.me\/[^"]+)"/)?.[1];
     assert.ok(href, item.file);
     const message = new URL(href.replaceAll("&amp;", "&")).searchParams.get("text") ?? "";
     assert.match(message, /Пишу с сайта shariku\.ru/);
     assert.ok(message.includes(item.subject), item.subject);
+    const offers = visibleMarkup(html).match(/<section\b[^>]*class="category-offers section"[^>]*>([\s\S]*?)<\/section>/)?.[1];
+    assert.ok(offers, item.file);
+    const offerCards = [...offers.matchAll(/<article\b[^>]*>([\s\S]*?)<\/article>/g)];
+    assert.ok(offerCards.length > 0, "Category choices must remain available");
+    for (const [, card] of offerCards) {
+      const title = card.match(/<h3>([^<]+)<\/h3>/)?.[1];
+      const request = hrefs(card).find((url) => url.pathname === "/order/");
+      assert.ok(request, `${item.file}: ${title}`);
+      assert.equal(request.searchParams.get("service"), item.service);
+      assert.equal(request.searchParams.get("subject"), title);
+    }
   }
 });
 
@@ -210,6 +253,41 @@ test("gives the portfolio its own social metadata and category links", async () 
   assert.match(html, /href="\/flowers\/"/);
   assert.match(html, /href="\/balloons\/"/);
   assert.match(html, /href="\/event-decoration\/"/);
+});
+
+test("exports a configured enquiry form with required contact details and a separate unchecked consent", async () => {
+  const html = visibleMarkup(await read("out/order/index.html"));
+  const form = html.match(/<form\b[^>]*>([\s\S]*?)<\/form>/)?.[1];
+  assert.ok(form, "Production build must have a configured order receiver, not only a fallback contact page");
+  const inputs = [...form.matchAll(/<input\b[^>]*>/g)].map(([tag]) => tag);
+  const input = (name) => inputs.find((tag) => tag.includes(`name="${name}"`));
+  const required = (tag) => /\brequired(?:\s|=|>)/.test(tag ?? "");
+  assert.match(input("phone") ?? "", /type="tel"/);
+  assert.ok(required(input("phone")), "Telephone is required for a callback");
+  assert.ok(input("name"));
+  assert.equal(required(input("name")), false, "A visitor may omit their name");
+  assert.match(input("eventDate") ?? "", /type="date"/);
+  assert.equal(required(input("eventDate")), false, "An undecided event date must not block an enquiry");
+  const details = form.match(/<textarea\b[^>]*name="details"[^>]*>/)?.[0];
+  assert.ok(required(details), "Order wishes are required");
+  const selector = form.match(/<select\b[^>]*name="service"[^>]*>([\s\S]*?)<\/select>/)?.[1];
+  assert.ok(selector);
+  const options = [...selector.matchAll(/<option\b[^>]*value="([^"]+)"[^>]*>/g)].map(([, value]) => value);
+  assert.deepEqual(new Set(options), new Set(["flowers", "balloons", "decoration", "other"]));
+  const consent = input("consent");
+  assert.match(consent ?? "", /type="checkbox"/);
+  assert.ok(required(consent));
+  assert.doesNotMatch(consent, /\bchecked(?:\s|=|>)/, "Order-data consent must not be preselected");
+  const checkboxes = inputs.filter((tag) => /type="checkbox"/.test(tag));
+  assert.equal(checkboxes.length, 1, "Analytics permission is separate from the order-data checkbox");
+  const links = hrefs(form);
+  assert.ok(links.some((url) => url.pathname === "/order-consent/"));
+  assert.ok(links.some((url) => url.pathname === "/privacy/"));
+  assert.match(form, /Согласие на аналитику необязательно/);
+  assert.match(form, /<button\b[^>]*type="submit"[^>]*>Отправить заявку/);
+  assert.doesNotMatch(form, /<input\b[^>]*type="password"/, "No account registration is required");
+  assert.ok(hrefs(html).some((url) => url.protocol === "tel:" && url.pathname === "+79243370123"));
+  assert.ok(html.includes('rel="canonical" href="https://shariku.ru/order/"'));
 });
 
 test("portfolio assets have unique local sources, descriptive labels and nonempty files", async () => {
@@ -347,6 +425,7 @@ test("exports legal documents with the proprietor's verified details and working
     ["analytics-consent/", "Согласие на обработку данных для аналитики"],
     ["requisites/", "Сведения и контакты"],
     ["ordering/", "Заказ, доставка и оплата"],
+    ["order-consent/", "Согласие на обработку данных заявки"],
   ];
   const sitemap = await read("out/sitemap.xml");
   for (const [path, heading] of cases) {
@@ -368,7 +447,7 @@ test("exports legal documents with the proprietor's verified details and working
 });
 
 test("does not embed a tracking pixel or third-party analytics script before consent", async () => {
-  for (const path of ["", "flowers/", "balloons/", "event-decoration/", "works/", "privacy/", "analytics-consent/", "requisites/", "ordering/"]) {
+  for (const path of ["", "flowers/", "balloons/", "event-decoration/", "works/", "privacy/", "analytics-consent/", "requisites/", "ordering/", "order/", "order-consent/"]) {
     const html = await read(`out/${path}index.html`);
     assert.doesNotMatch(html, /mc\.yandex\.ru\/watch|<script[^>]+src=["']https:\/\/mc\.yandex/, path);
   }

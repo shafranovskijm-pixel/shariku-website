@@ -26,6 +26,7 @@ export default function LegalFooter() {
         <nav className={styles.footerLinks} aria-label="Документы и условия">
           <a href="/privacy/">Политика конфиденциальности</a>
           <a href="/analytics-consent/">Согласие на аналитику</a>
+          <a href="/order-consent/">Согласие на обработку заявки</a>
           <a href="/requisites/">Сведения и контакты</a>
           <a href="/ordering/">Заказ, доставка и оплата</a>
           <PrivacySettingsButton />
